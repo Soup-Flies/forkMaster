@@ -1,12 +1,12 @@
 
 
 //click handling for search button
-$("#").click("on", function(event) {
+$("#click").click("on", function(event) {
   event.preventDefault();
   // runAPI function with input parameters
 });
 
-$("#").on("keyup", function(event) {
+$("#keys").on("keyup", function(event) {
   event.preventDefault();
   console.log(event.keyCode);
 });
@@ -50,7 +50,7 @@ var apiUrl = "https://maps.googleapis.com/maps/api/js?key=" + googlePlacesKey + 
   })
     .done(function(data) {
       console.log("Hello!");
-      console.log(data);
+      console.log(JSON.stringify(data));
     })
 
 var apiUrl = "https://maps.googleapis.com/maps/api/js?key=" + googleKey + "&callback=initMap";
@@ -62,13 +62,19 @@ $.ajax({
   }
 })
   .done(function(data) {
-    console.log(data);
+    console.log(JSON.stringify(data));
   })
-  var map;
-   function initMap() {
-     map = new google.maps.Map(document.getElementById('map'), {
-       center: {lat: -34.397, lng: 150.644},
-       zoom: 8
-     });
-   }
-   initMap();
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: -34.397, lng: 150.644},
+      zoom: 8
+    });
+  }
+
+
+  $(document).ready(function() {
+    var map;
+
+     initMap();
+  })
