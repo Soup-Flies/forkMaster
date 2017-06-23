@@ -1,3 +1,23 @@
+
+
+//click handling for search button
+$("#").click("on", function(event) {
+  event.preventDefault();
+  // runAPI function with input parameters
+});
+
+$("#").on("keyup", function(event) {
+  event.preventDefault();
+  console.log(event.keyCode);
+});
+
+
+
+
+
+//////// BASE API INFORMATION FOLLOWING
+
+
 var zillowApi = "http://www.zillow.com/webservice/GetZestimate.htm";
 var zillowKey = "X1-ZWz195aafxhlor_4vl2o";
 var googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
