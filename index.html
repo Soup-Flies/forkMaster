@@ -13,9 +13,125 @@
     <script src="http://momentjs.com/downloads/moment.min.js"></script>
 </head>
 <body>
-<div id='map'>
 
-</div>
+  
+  <!-- Main Bootstrap Search -->
+  <div class="container">
+   <div class="row">
+      <div class="col-sm-12">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+    <!-- Jumbotron for Title -->
+              <div class="form-group">
+              <label class="control-label" for="inputLarge">Our App</label>
+              <input class="form-control input-lg" type="text" id="inputLarge">
+              </div>
+ 
+      <button type="submit" class="btn btn-default" id="run-search"><i class="fa fa-search"></i> Search</button>
+              <button type="button" class="btn btn-default" id="clear-all"> Clear Results</button>
+        </div>
+      </div>
+    </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+   
+<div class="row">
+  <div class="customDiv">
+      <div class="col-sm-6">
+          <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title"><strong>Search Parameters</h3></strong>
+          </div>
+          <div class="panel-body">
+
+            <!-- Here we create an HTML Form for handling the dropdown menu-->
+            <div class="btn-group">
+              <a href="#" class="btn btn-primary">Rent/Buy</a>
+              <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
+              <ul class="dropdown-menu">
+               <li><a href="#">Renting</a></li>
+               <li><a href="#">Buying</a></li>
+              </ul>
+            </div>
+
+            <div class="btn-group">
+              <a href="#" class="btn btn-primary">Neighborhood Highlights</a>
+              <a href="#" class="btn btn-primary dropdown-toggle"  data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
+              <ul class="dropdown-menu">
+               <li><a href="#">I want to live close to a library</a></li>
+               <li><a href="#">I want to live near a school</a></li>
+               ></li>
+               <li><a href="#">I want to live near a park</a></li>
+               ></li>
+               <li><a href="#">I want to live near public transportation</a></li>
+               ></li>
+               <li><a href="#">I want to live near my favorite restaurant</a></li>
+             </ul>
+            </div>
+
+            <div class="btn-group">
+              <a href="#" class="btn btn-default">Distance from my favortie place</a>
+              <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Walking distance</a></li>
+                <li><a href="#">2 miles</a></li>
+                <li><a href="#">within 5 miles</a></li>
+                <li><a href="#">within 10 miles</a></li>
+              </ul>
+            </div>
+
+
+            </div>
+           
+            </div>
+
+
+   
+      <div class="col-sm-6">
+        <br>
+
+        <!-- This panel will initially be made up of a panel for the map -->
+      
+          <div class="panel panel-primary">
+
+          <!-- Panel Heading for the retrieved articles box -->
+           <div class="panel-heading">
+            <h3 class="panel-title"><strong>Map here</strong></h3>
+            <div id='map'>
+
+			</div>
+
+            </div>
+
+          <!-- This main panel will hold each of the resulting articles -->
+            <div class="panel-body" id="well-section">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Region -->
+    <div class="row">
+      <div class="col-sm-12">
+
+        <!-- Line Break followed by closing -->
+        <hr>
+        <h5 class="text-center"><small>Text here</i></small></h5>
+
+      </div>
+    </div>
+
+  </div>
 
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I&callback=initMap"
