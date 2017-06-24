@@ -81,9 +81,9 @@ function initMap() {
       center: {lat: currentSearch.lat, lng: currentSearch.long},
       zoom: 13
     });
-    $.each(response.results, function(index, value) {
-
-    })
+    // $.each(response.results, function(index, value) {
+    //
+    // })
     var marker = new google.maps.Marker({
       position: geoLocation,
       map: map
