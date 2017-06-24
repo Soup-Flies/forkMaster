@@ -5,11 +5,15 @@ var currentSearch = {
   venueType : "restaurant"
 }
 
+
+
+
 var zillowApi = "http://www.zillow.com/webservice/GetRegionChildren.htm";
 var zillowKey = "X1-ZWz195aafxhlor_4vl2o";
 var googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
 var googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
 var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=1609.344&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
+var searchRadius = 1609.344 * 3;
 
 // Changes XML to JSON
 function xmlToJson(xml) {
@@ -81,27 +85,44 @@ function initMap() {
       center: {lat: currentSearch.lat, lng: currentSearch.long},
       zoom: 13
     });
-    // $.each(response.results, function(index, value) {
-    //
-    // })
+}
+
+function updateMap(data) {
+  console.log(data);
+  $.each(data, function(index, value) {
+    var temp = data[index].geometry.location;
+    var loc = {
+      lat: temp.lat,
+      lng: temp.lng
+    };
+    var temp = data[index];
+    var markerData = {
+      name : temp.name,
+      pricing : temp.price_level,
+      rating : temp.rating,
+      type : temp.types,
+      address : temp.vicinity
+    }
+
     var marker = new google.maps.Marker({
-      position: geoLocation,
-      map: map
-    })
-  }
+      position: loc,
+      map: map,
+      customInfo: markerData
+    });
+    console.log(marker);
+  });
+}
 
   function newPlaces() {
-    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=1609.344&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
+    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
     $.ajax({
       url: currentMap,
        type: 'GET',
        crossDomain: true,
        success: function(response) {
          var data = response.results;
-         console.log(currentMap);
-         console.log(currentSearch.lat, currentSearch.long);
-         console.log(' What is the data???', response);
          console.log(' WHAT IS OUR RESPONSE DATA', response.results);
+         updateMap(data);
        },
     })
   };
