@@ -98,6 +98,7 @@ function updateMap(data) {
     var temp = data[index];
     var markerData = {
       name : temp.name,
+      id : temp.id,
       pricing : temp.price_level,
       rating : temp.rating,
       type : temp.types,
@@ -134,6 +135,12 @@ function updateMap(data) {
     })
   };
 
+  function placesData() {
+    service = new google.maps.places.PlacesService(map);
+    service.getDetails("386556f67c47e197cdd016ce4ccf521df13cad30", function(place, status) {
+      console.log(place, status);
+    });
+  }
 
   $(document).ready(function() {
     var map;
