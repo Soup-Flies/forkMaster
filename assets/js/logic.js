@@ -108,13 +108,17 @@ function updateMap(data) {
       map: map,
       customInfo: markerData
     });
-    var contentString = "quotes";
+    var contentString =  "<h4>" + markerData.name + "</h4>" + "<p>" + markerData.pricing + "</p>" + "<p>" + markerData.rating + "</p>"
+    + "<p>" + markerData.types + "</p>" + "<p>" + markerData.pricing + "</p>";
     var infowindow = new google.maps.InfoWindow({
       content: contentString
     });
     console.log(marker);
-    marker.addListener('click', function() {
+    marker.addListener('mouseover', function() {
     infowindow.open(map, marker);
+    });
+    marker.addListener('mouseout', function() {
+    infowindow.close();
     });
   })
 }
