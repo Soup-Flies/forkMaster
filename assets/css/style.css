@@ -1,18 +1,8 @@
-#main {
-  font-size: 12px;
-}
-#map {
-    height: 100%;
-  }
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-	background-image: url(buildings.jpg);
-	color: black;
-	font-family: 'Sans-serif','Arial', 'Helvetica Neue', 'Helvetica'; 
-    width: 960;
-    font-size: 22px;
-}
 
+#map {
+    margin-top: 15vh;
+    margin-left: 2vh;
+    height: 70vh;
+    width: 75vw;
+    border: 2px solid black;
   }
