@@ -28,10 +28,10 @@
           <div class="row">
             <input class="form-control input-md" type="text" id="userSelection" placeholder="Address, Neighborhood or Zip">
             <div class="row">
-              <button type="button" class="btn btn-default btn-md col-xs-2" id="buySelector" value="Buy">Buy Properties</button>
-              <button type="button" class="btn btn-default btn-md col-xs-2" id="rentSelector" value="Rent">Rent Properties</button>
-              <button type="button" class="btn btn-default btn-md col-xs-2" id="amenitiesSelector" value="amenities">Local Amenities</button>
-              <button type="button" class="btn btn-default btn-md col-xs-2" id="surpriseMe" value="surprise">Investment Properties</button>
+              <button type="button" class="btn btn-default btn-md col-xs-2" id="buySelector" value="Buy">Buy</button>
+              <button type="button" class="btn btn-default btn-md col-xs-2" id="rentSelector" value="Rent">Rent</button>
+              <button type="button" class="btn btn-default btn-md col-xs-2" id="amenitiesSelector" value="amenities">Amenities</button>
+              <button type="button" class="btn btn-default btn-md col-xs-2" id="surpriseMe" value="surprise">Surprise Me!</button>
             </div>
           </div>
           </div>
@@ -49,8 +49,11 @@
 
   <div class="row">
     <div class="col-xs-12 col-sm-6">
-      <div id="map">
+      <div id="map"></div>
+      <div class="testInfo" id="paraInfo"></div>
     </div>
+
+
 
     <div class="panel-group">
       <div class="col-xs-12 col-sm-6 col-md-4">
@@ -113,10 +116,12 @@
       </div>
     </div>
   </div>
-
+</div>
 
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I&callback=initMap" async defer></script>
   <script src="./assets/js/logic.js"></script>
 
 
-</div></body>
+</div>
+</body>
+</html>
