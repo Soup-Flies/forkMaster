@@ -103,15 +103,22 @@ function updateMap(data) {
       type : temp.types,
       address : temp.vicinity
     }
-
     var marker = new google.maps.Marker({
       position: loc,
       map: map,
       customInfo: markerData
     });
+    var contentString = "quotes";
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
     console.log(marker);
-  });
+    marker.addListener('click', function() {
+    infowindow.open(map, marker);
+    });
+  })
 }
+
 
   function newPlaces() {
     currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
@@ -143,19 +150,5 @@ function updateMap(data) {
       event.preventDefault();
       console.log(event.keyCode);
     });
+    newPlaces();
   })
-  var contentString = ;
-
-          var infowindow = new google.maps.InfoWindow({
-            content: contentString
-          });
-
-          var marker = new google.maps.Marker({
-            position: uluru,
-            map: map,
-            title: 'Uluru (Ayers Rock)'
-          });
-          marker.addListener('click', function() {
-            infowindow.open(map, marker);
-          });
-        }
