@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="./assets/css/reset.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+
+    <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="http://momentjs.com/downloads/moment.min.js"></script>
+</head>
+<body>
+
+  <div class="container">
+   <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-9">
+        <div class="form-group">
+          <label class="control-label" for="inputLarge"><h1>PRESTIGE WORLDWIDE</h1></label>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <div class="col-xs-12 col-sm-8">
+          <div class="row">
+            <input class="form-control input-md" type="text" id="userSelection" placeholder="Address, Neighborhood or Zip">
+            <div class="row">
+              <button type="button" class="btn btn-default btn-md col-xs-2" id="buySelector" value="Buy">Buy Properties</button>
+              <button type="button" class="btn btn-default btn-md col-xs-2" id="rentSelector" value="Rent">Rent Properties</button>
+              <button type="button" class="btn btn-default btn-md col-xs-2" id="amenitiesSelector" value="amenities">Local Amenities</button>
+              <button type="button" class="btn btn-default btn-md col-xs-2" id="surpriseMe" value="surprise">Investment Properties</button>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+      <div id="map"></div>
+      <div class="testInfo" id="paraInfo"></div>
+    </div>
+
+
+
+    <div class="panel-group">
+      <div class="col-xs-12 col-sm-6 col-md-4">
+          <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title"><strong>Search Parameters</strong></h3>
+          </div>
+          </div>
+
+          <div class="panel-body">
+
+            <div class="dropdown">
+              <button class="dropbtn btn-primary">Price Range:</button>
+              <div class="dropdown-content">
+               <a href="#">xxx</a>
+               <a href="#">yyy</a>
+               <a href="#">zzz</a>
+              </div>
+            </div>
+
+            <div class="dropdown">
+            <button class="dropbtn btn-primary">Neighborhood Rating:</button>
+            <div class="dropdown-content">
+              <a href="#">aaa</a>
+              <a href="#">bbb</a>
+              <a href="#">ccc</a>
+            </div>
+          </div>
+          <br>
+          <div class="dropdownSelectors">
+          <button class="dropbtn btn-primary">Neighborhood Highlights:</button>
+             <div id="dropdown content">
+              <a href="#">aaa</a>
+              <a href="#">bbb</a>
+              <a href="#">ccc</a>
+             </div>
+          </div>
+
+              <ul class="dropdown-menu">
+               <li><a href="#">I want to live close to a library</a></li>
+               <li><a href="#">I want to live near a school</a></li>
+               &gt;
+               <li><a href="#">I want to live near a park</a></li>
+               &gt;
+               <li><a href="#">I want to live near public transportation</a></li>
+               &gt;
+               <li><a href="#">I want to live near my favorite restaurant</a></li>
+             </ul>
+
+            <div class="btn-group">
+              <a href="#" class="btn btn-default">Distance from my favortie place</a>
+              <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Walking distance</a></li>
+                <li><a href="#">2 miles</a></li>
+                <li><a href="#">within 5 miles</a></li>
+                <li><a href="#">within 10 miles</a></li>
+              </ul>
+            </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I&callback=initMap" async defer></script>
+  <script src="./assets/js/logic.js"></script>
+
+
+</div>
+</body>
+</html>
