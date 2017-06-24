@@ -1,10 +1,15 @@
-
+var currentSearch = {
+  id : "",
+  lat : 39.764339,
+  long : -104.85511,
+  venueType : "restaurant"
+}
 
 var zillowApi = "http://www.zillow.com/webservice/GetRegionChildren.htm";
 var zillowKey = "X1-ZWz195aafxhlor_4vl2o";
 var googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
 var googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
-var apiUrl = zillowApi + "?state=colorado&city=denver&zws-id=" + zillowKey;
+var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=1609.344&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
 
 // Changes XML to JSON
 function xmlToJson(xml) {
@@ -45,14 +50,8 @@ function xmlToJson(xml) {
 	return obj;
 };
 
-
-var currentSearch = {
-  id : "",
-  lat : 39.764339,
-  long : -104.85511
-}
-
 function zillowApi() {
+  var apiUrl = zillowApi + "?state=colorado&city=denver&zws-id=" + zillowKey;
   $.ajax({
     method: "GET",
     url: apiUrl,
@@ -70,25 +69,29 @@ function zillowApi() {
       currentSearch.long = parseFloat(temp.longitude["#text"]);
       console.log(currentSearch);
       initMap()
-
     })
     .fail(function(data) {
       console.log("ERROR: " + data);
     })
 }
 
-function googleApi() {
-
-}
-
-  function initMap() {
+function initMap() {
+  var geoLocation = {lat: currentSearch.lat, lng: currentSearch.long};
     map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: currentSearch.lat, lng: currentSearch.long},
       zoom: 13
     });
+    $.each(response.results, function(index, value) {
+
+    })
+    var marker = new google.maps.Marker({
+      position: geoLocation,
+      map: map
+    })
   }
-var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=1609.34&type=restaurant&key=${googlePlacesKey}`;
+
   function newPlaces() {
+    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=1609.344&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
     $.ajax({
       url: currentMap,
        type: 'GET',
@@ -96,7 +99,7 @@ var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?l
        success: function(response) {
          var data = response.results;
          console.log(currentMap);
-         console.log(currentSearch.lat, currentSearch.long)
+         console.log(currentSearch.lat, currentSearch.long);
          console.log(' What is the data???', response);
          console.log(' WHAT IS OUR RESPONSE DATA', response.results);
        },
@@ -109,7 +112,9 @@ var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?l
 
     //click handling for search button
     $("#click").click("on", function(event) {
+      newPlaces(event);
       event.preventDefault();
+      zillowApi($("#userSelection").val())
       // runAPI function with input parameters
     });
     //enter key handling for search button
