@@ -98,27 +98,21 @@ function updateMap(data) {
     var temp = data[index];
     var markerData = {
       name : temp.name,
+      id : temp.id,
       pricing : temp.price_level,
       rating : temp.rating,
       type : temp.types,
       address : temp.vicinity
     }
+
     var marker = new google.maps.Marker({
       position: loc,
       map: map,
       customInfo: markerData
     });
-    var contentString = "quotes";
-    var infowindow = new google.maps.InfoWindow({
-      content: contentString
-    });
-    console.log(marker);
-    marker.addListener('click', function() {
-    infowindow.open(map, marker);
-    });
-  })
+    // console.log(marker);
+  });
 }
-
 
   function newPlaces() {
     currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
@@ -128,12 +122,21 @@ function updateMap(data) {
        crossDomain: true,
        success: function(response) {
          var data = response.results;
-         console.log(' WHAT IS OUR RESPONSE DATA', response.results);
+        //  console.log(' WHAT IS OUR RESPONSE DATA', response.results);
          updateMap(data);
        },
     })
   };
 
+  function placesData() {
+    var request = {
+      placeId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
+    };
+    service = new google.maps.places.PlacesService(map);
+    service.getDetails(request, function(place, status) {
+        console.log(place, status);
+    });
+  }
 
   $(document).ready(function() {
     var map;
@@ -150,5 +153,4 @@ function updateMap(data) {
       event.preventDefault();
       console.log(event.keyCode);
     });
-    newPlaces();
   })
