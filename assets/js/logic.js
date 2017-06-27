@@ -2,13 +2,17 @@ var currentSearch = {
   id : "",
   lat : 39.764339,
   long : -104.85511,
-  venueType : "restaurant"
+  zip : "80215",
+  venueType : "restaurant",
+  state : "Colorado",
+  city : "Denver"
 }
 
 
 
 
 var zillowApi = "http://www.zillow.com/webservice/GetRegionChildren.htm";
+var zillowEstimate = "http://www.zillow.com/webservice/GetSearchResults.htm";
 var zillowKey = "X1-ZWz195aafxhlor_4vl2o";
 var googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
 var googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
@@ -135,19 +139,27 @@ function updateMap(data) {
     });
   }
 
+  function updateCurrentSearch() {
+
+  }
+
   $(document).ready(function() {
     var map;
 
     //click handling for search button
     $("#click").click("on", function(event) {
-      newPlaces(event);
       event.preventDefault();
+      console.log(this)
+      // updateCurrentSearch(this);
+      newPlaces(this);
       zillowApi($("#userSelection").val())
       // runAPI function with input parameters
     });
     //enter key handling for search button
     $("#keys").on("keyup", function(event) {
       event.preventDefault();
+      console.log(this);
+      // updateCurrentSearch(this);
       console.log(event.keyCode);
     });
   })
