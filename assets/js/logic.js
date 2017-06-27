@@ -13,12 +13,17 @@ var zillowEstimate = "http://www.zillow.com/webservice/GetSearchResults.htm";
 var zillowKey = "X1-ZWz195aafxhlor_4vl2o";
 var googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
 var googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
-var searchRadius = 1609.344 * 3;
-searchRadius = searchRadius.toString();
+
+//search radius of 3 miles, 1609.344 is meters per mile
+var searchRadius = (1609.344 * 3).toString();
 var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
 
+function testUserInput() {
+  //test what kind and if the user input was valid, then build object for search
+}
 
-// Changes XML to JSON
+
+// Changes XML to JSON -- Needed for all Zillow Searches
 function xmlToJson(xml) {
 
 	// Create the return object
@@ -69,6 +74,7 @@ function apiLinkBuild(apiType) {
 
 }
 
+//Call api for zillow
 function zillowApi(url) {
   var apiUrl = url;
   $.ajax({
@@ -93,6 +99,8 @@ function zillowApi(url) {
     })
 }
 
+
+//Callback function from HTML to start the google map
 function initMap() {
   var geoLocation = {lat: currentSearch.lat, lng: currentSearch.long};
     map = new google.maps.Map(document.getElementById('map'), {
@@ -101,6 +109,8 @@ function initMap() {
     });
 }
 
+
+//New call to update maps with search parameters passed by user
 function updateMap(data) {
   console.log(data);
   $.each(data, function(index, value) {
@@ -139,9 +149,11 @@ function updateMap(data) {
 }
 
 function areaAverage(ratingInfo) {
-
+  //this is where we "gather" the data that will be displayed below map for a clear idea of the area
+  //for example the rating of nearby restaurants as an average
 }
 
+//New api call to google for the map information
   function newPlaces() {
     currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
     $.ajax({
@@ -156,6 +168,7 @@ function areaAverage(ratingInfo) {
     })
   };
 
+//make call to google places to harness information for display
   function placesData() {
     service = new google.maps.places.PlacesService(map);
     service.getDetails("386556f67c47e197cdd016ce4ccf521df13cad30", function(place, status) {
@@ -163,6 +176,7 @@ function areaAverage(ratingInfo) {
     });
   }
 
+//take in user input for the searches to happen
   function updateCurrentSearch() {
 
   }
