@@ -26,22 +26,38 @@ var corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 function testUserInput() {
   //test what kind and if the user input was valid, then build object for search
 
-  if ($("#inputZip").val().length == 5) {
-    return true;
+  var addyDeets = { "address" : [
+      {"zip" : ""},
+      {"city" : ""},
+      {"state" : ""}]
+  };
+
+  if ($("#inputZip").val().length() == 5) {
+    this.val().function(initMap(addyDeets));
   } else {
-      return false;
-      console.log("zip isn't correct");
-        if ($("#inputZip") !== 5) {
-          $("#inputZip").html("Please enter a 5 digit zip code");
-          } else {
-            zip.length.trim();
-          }
-        };
+    $("#inputZip").html("Please enter a 5 digit zip code");
+        if ($("#inputState") == true) {
+          this.val().function(initMap(addyDeets));
+        } else {
+          $("#inputCity").val().function(initMap(addyDeets));
+        }
+  };
   
   if ($("#inputCity") == true) {
+    this.val.function(initMap(addyDeets));
+  } else {
+    $("#inputState").val().function(initMap(addyDeets));
+  } else if {
+    $("#inputZip").val().function(initMap(addyDeets));
+  };
 
-  }
-
+  if ($("#inputState") == true) {
+    this.val().function(initMap(addyDeets));
+  } else {
+    $("#inputCity").val().function(initMap(addyDeets));
+  } else if {
+    $("#inputZip").val().function(initMap(addyDeets));
+  };
 };
 
 //take in user input for the searches to happen
@@ -132,11 +148,11 @@ function zillowApi(url) {
       searchInput.long = parseFloat(temp.longitude["#text"]);
       console.log(searchInput);
       initMap()
-    })
+    });
     .fail(function(data) {
       console.log("ERROR: ", data);
-    })
-}
+    });
+};
 
 
 //Callback function from HTML to start the google map
