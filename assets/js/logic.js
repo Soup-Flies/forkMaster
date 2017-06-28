@@ -212,7 +212,6 @@ function updateMap(data) {
       type : temp.types,
       address : temp.vicinity
     }
-
     var marker = new google.maps.Marker({
       position: loc,
       map: map,
@@ -230,7 +229,16 @@ function updateMap(data) {
     infowindow.close();
     });
   });
-}
+    var contentString = "quotes";
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+    console.log(marker);
+    marker.addListener('click', function() {
+    infowindow.open(map, marker);
+    });
+  }
+
 
   function newPlaces() {
     currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
@@ -276,4 +284,5 @@ function updateMap(data) {
       // updateCurrentSearch(this);
       console.log(event.keyCode);
     });
+    newPlaces();
   })
