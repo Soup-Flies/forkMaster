@@ -45,17 +45,17 @@ function testUserInput() {
   
   if ($("#inputCity") == true) {
     this.val.function(initMap(addyDeets));
-  } else {
+  } else if ($("#inputState") == true) {
     $("#inputState").val().function(initMap(addyDeets));
-  } else if {
+  } else {
     $("#inputZip").val().function(initMap(addyDeets));
   };
 
   if ($("#inputState") == true) {
     this.val().function(initMap(addyDeets));
-  } else {
+  } else if ($("#inputCity") == true) {
     $("#inputCity").val().function(initMap(addyDeets));
-  } else if {
+  } else {
     $("#inputZip").val().function(initMap(addyDeets));
   };
 };
@@ -148,10 +148,10 @@ function zillowApi(url) {
       searchInput.long = parseFloat(temp.longitude["#text"]);
       console.log(searchInput);
       initMap()
-    });
+    })
     .fail(function(data) {
       console.log("ERROR: ", data);
-    });
+    })
 };
 
 
