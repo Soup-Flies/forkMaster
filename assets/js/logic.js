@@ -1,3 +1,5 @@
+
+//this is just for static testing
 var currentSearch = {
   id : "",
   lat : 39.764339,
@@ -17,10 +19,23 @@ var googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
 //search radius of 3 miles, 1609.344 is meters per mile
 var searchRadius = (1609.344 * 3).toString();
 var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
+var userInput = {};
+
 
 function testUserInput() {
   //test what kind and if the user input was valid, then build object for search
 }
+
+//take in user input for the searches to happen
+  function updateCurrentSearch(data) {
+    searchInput = {
+      zip : $("#inputZip").val(),
+      state : $("#inputState").val(),
+      city : $("#inputCity").val(),
+      type : data.value
+    }
+    apiLinkBuild("zillowRegion", searchInput)
+  };
 
 
 // Changes XML to JSON -- Needed for all Zillow Searches
@@ -95,7 +110,7 @@ function zillowApi(url) {
       initMap()
     })
     .fail(function(data) {
-      console.log("ERROR: " + data);
+      console.log("ERROR: ", data);
     })
 }
 
@@ -176,23 +191,20 @@ function areaAverage(ratingInfo) {
     });
   }
 
-//take in user input for the searches to happen
-  function updateCurrentSearch() {
-
-  }
 
   $(document).ready(function() {
     var map;
 
     //click handling for search button
-    $("#click").click("on", function(event) {
+    $(".typeDefinition").click("on", function(event) {
+      
       event.preventDefault();
-      console.log(this)
-      // updateCurrentSearch(this);
-      newPlaces(this);
+      console.log(userInput);
+      updateCurrentSearch(this);
+      // newPlaces();
 
-      apiLinkBuild("zillowRegion")
-      zillowApi($("#userSelection").val())
+
+      // zillowApi($("#userSelection").val())
     });
     //enter key handling for search button
     $("#keys").on("keyup", function(event) {
