@@ -25,7 +25,40 @@ var corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 
 function testUserInput() {
   //test what kind and if the user input was valid, then build object for search
-}
+
+  var addyDeets = { "address" : [
+      {"zip" : ""},
+      {"city" : ""},
+      {"state" : ""}]
+  };
+
+  if ($("#inputZip").val().length() == 5) {
+    this.val().function(initMap(addyDeets));
+  } else {
+    $("#inputZip").html("Please enter a 5 digit zip code");
+        if ($("#inputState") == true) {
+          this.val().function(initMap(addyDeets));
+        } else {
+          $("#inputCity").val().function(initMap(addyDeets));
+        }
+  };
+  
+  if ($("#inputCity") == true) {
+    this.val.function(initMap(addyDeets));
+  } else if ($("#inputState") == true) {
+    $("#inputState").val().function(initMap(addyDeets));
+  } else {
+    $("#inputZip").val().function(initMap(addyDeets));
+  };
+
+  if ($("#inputState") == true) {
+    this.val().function(initMap(addyDeets));
+  } else if ($("#inputCity") == true) {
+    $("#inputCity").val().function(initMap(addyDeets));
+  } else {
+    $("#inputZip").val().function(initMap(addyDeets));
+  };
+};
 
 //take in user input for the searches to happen
   function updateCurrentSearch(data) {
@@ -119,7 +152,7 @@ function zillowApi(url) {
     .fail(function(data) {
       console.log("ERROR: ", data);
     })
-}
+};
 
 
 //Callback function from HTML to start the google map
@@ -179,7 +212,6 @@ function updateMap(data) {
       type : temp.types,
       address : temp.vicinity
     }
-
     var marker = new google.maps.Marker({
       position: loc,
       map: map,
@@ -197,7 +229,16 @@ function updateMap(data) {
     infowindow.close();
     });
   });
-}
+    var contentString = "quotes";
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+    console.log(marker);
+    marker.addListener('click', function() {
+    infowindow.open(map, marker);
+    });
+  }
+
 
   function newPlaces() {
     currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
@@ -243,4 +284,5 @@ function updateMap(data) {
       // updateCurrentSearch(this);
       console.log(event.keyCode);
     });
+    newPlaces();
   })
