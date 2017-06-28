@@ -1,21 +1,49 @@
+
+//this is just for static testing
 var currentSearch = {
   id : "",
   lat : 39.764339,
   long : -104.85511,
-  venueType : "restaurant"
+  zip : "80215",
+  venueType : "restaurant",
+  state : "Colorado",
+  city : "Denver"
 }
 
-
-
-
-var zillowApi = "http://www.zillow.com/webservice/GetRegionChildren.htm";
+var zillowRegionChildren = "http://www.zillow.com/webservice/GetRegionChildren.htm?";
+var zillowEstimate = "http://www.zillow.com/webservice/GetSearchResults.htm";
 var zillowKey = "X1-ZWz195aafxhlor_4vl2o";
 var googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
 var googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
-var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=1609.344&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
-var searchRadius = 1609.344 * 3;
+var initialLoad = true;
+//search radius of 3 miles, 1609.344 is meters per mile
+var searchRadius = (1609.344 * 3).toString();
+var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
+var searchInput = {};
+var corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 
-// Changes XML to JSON
+
+function testUserInput() {
+  //test what kind and if the user input was valid, then build object for search
+}
+
+//take in user input for the searches to happen
+  function updateCurrentSearch(data) {
+    searchInput = {};
+    searchInput = {
+      id : "",
+      zip : $("#inputZip").val(),
+      state : $("#inputState").val(),
+      city : $("#inputCity").val(),
+      type : data.value,
+      venueType : "restaurant"
+    }
+    console.log(searchInput);
+    zillowApi(apiLinkBuild("zillowRegion", searchInput));
+  };
+
+
+// Changes XML to JSON -- Needed for all Zillow Searches
 function xmlToJson(xml) {
 
 	// Create the return object
@@ -54,8 +82,23 @@ function xmlToJson(xml) {
 	return obj;
 };
 
-function zillowApi() {
-  var apiUrl = zillowApi + "?state=colorado&city=denver&zws-id=" + zillowKey;
+function apiLinkBuild(apiType) {
+  //update to switch for clarity?
+  //build url for api depending on user input
+  if (apiType == "zillowRegion") {
+    var tempUrl = `${zillowRegionChildren}zws-id=${zillowKey}&state=${searchInput.state}&city=${searchInput.city}&childtype=neighborhood`;
+    return tempUrl;
+  } else if (apiType == "googlePlaces") {
+    var tempUrl;
+  }
+
+}
+
+//Call api for zillow
+function zillowApi(url) {
+  var url = `${corsWorkaround}${url}`;
+
+  var apiUrl = url;
   $.ajax({
     method: "GET",
     url: apiUrl,
@@ -64,29 +107,61 @@ function zillowApi() {
     }
   })
     .done(function(data) {
-      console.log(data);
       dataJSON = xmlToJson(data);
       console.log(dataJSON);
       var temp = dataJSON["RegionChildren:regionchildren"].response.region;
-      currentSearch.id = temp.id["#text"];
-      currentSearch.lat = parseFloat(temp.latitude["#text"]);
-      currentSearch.long = parseFloat(temp.longitude["#text"]);
-      console.log(currentSearch);
+      searchInput.id = temp.id["#text"];
+      searchInput.lat = parseFloat(temp.latitude["#text"]);
+      searchInput.long = parseFloat(temp.longitude["#text"]);
+      console.log(searchInput);
       initMap()
     })
     .fail(function(data) {
-      console.log("ERROR: " + data);
+      console.log("ERROR: ", data);
     })
 }
 
+
+//Callback function from HTML to start the google map
 function initMap() {
-  var geoLocation = {lat: currentSearch.lat, lng: currentSearch.long};
+  // console.log(currentSearch);
+  if (initialLoad) {
+    var geoLocation = {lat: 39.764339, lng: -104.85511};
+  } else {
+    var geoLocation = {lat: searchInput.lat, lng: searchInput.long};
+  }
     map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: currentSearch.lat, lng: currentSearch.long},
+      center: geoLocation,
       zoom: 13
     });
+    if (initialLoad) {
+      initialLoad = false;
+    } else {
+      newPlaces();
+    }
+
 }
 
+//New api call to google for the map information
+  function newPlaces() {
+    console.log(searchInput);
+    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+    currentMap = `${corsWorkaround}${currentMap}`;
+    $.ajax({
+      url: currentMap,
+       type: 'GET',
+       crossDomain: true,
+       success: function(response) {
+         console.log(response);
+         var data = response.results;
+         console.log(' WHAT IS OUR RESPONSE DATA', response.results);
+         updateMap(data);
+       },
+    })
+  };
+
+
+//New call to update maps with search parameters passed by user
 function updateMap(data) {
   console.log(data);
   $.each(data, function(index, value) {
@@ -110,7 +185,6 @@ function updateMap(data) {
       map: map,
       customInfo: markerData
     });
-    // console.log(marker);
   });
 }
 
@@ -142,15 +216,20 @@ function updateMap(data) {
     var map;
 
     //click handling for search button
-    $("#click").click("on", function(event) {
-      newPlaces(event);
+    $(".typeDefinition").click("on", function(event) {
       event.preventDefault();
-      zillowApi($("#userSelection").val())
-      // runAPI function with input parameters
+      //userinputvalidation
+      updateCurrentSearch(this);
+      // newPlaces();
+
+
+      // zillowApi($("#userSelection").val())
     });
     //enter key handling for search button
     $("#keys").on("keyup", function(event) {
       event.preventDefault();
+      console.log(this);
+      // updateCurrentSearch(this);
       console.log(event.keyCode);
     });
   })
