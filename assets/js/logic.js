@@ -212,6 +212,7 @@ function updateMap(data) {
       type : temp.types,
       address : temp.vicinity
     }
+
     var marker = new google.maps.Marker({
       position: loc,
       map: map,
@@ -228,25 +229,32 @@ function updateMap(data) {
     marker.addListener('mouseout', function() {
     infowindow.close();
     });
-  })
-  areaAverage(data);
+  });
 }
 
-function areaAverage(ratingInfo) {
-  //this is where we "gather" the data that will be displayed below map for a clear idea of the area
-  //for example the rating of nearby restaurants as an average
-}
+  function newPlaces() {
+    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+    $.ajax({
+      url: currentMap,
+       type: 'GET',
+       crossDomain: true,
+       success: function(response) {
+         var data = response.results;
+        //  console.log(' WHAT IS OUR RESPONSE DATA', response.results);
+         updateMap(data);
+       },
+    })
+  };
 
-
-
-//make call to google places to harvest information for display
   function placesData() {
+    var request = {
+      placeId: "ChIJN1t_tDeuEmsRUsoyG83frY4"
+    };
     service = new google.maps.places.PlacesService(map);
-    service.getDetails("386556f67c47e197cdd016ce4ccf521df13cad30", function(place, status) {
-      console.log(place, status);
+    service.getDetails(request, function(place, status) {
+        console.log(place, status);
     });
   }
-
 
   $(document).ready(function() {
     var map;
