@@ -24,7 +24,24 @@ var userInput = {};
 
 function testUserInput() {
   //test what kind and if the user input was valid, then build object for search
-}
+
+  if ($("#inputZip").val().length == 5) {
+    return true;
+  } else {
+      return false;
+      console.log("zip isn't correct");
+        if ($("#inputZip") !== 5) {
+          $("#inputZip").html("Please enter a 5 digit zip code");
+          } else {
+            zip.length.trim();
+          }
+        };
+
+  if ($("#inputCity") == true) {
+    testUserInput
+  }
+
+};
 
 //take in user input for the searches to happen
   function updateCurrentSearch(data) {
