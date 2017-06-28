@@ -185,11 +185,22 @@ function updateMap(data) {
       map: map,
       customInfo: markerData
     });
+    var contentString =  "<h4>" + markerData.name + "</h4>" + "<p>" + markerData.pricing + "</p>" + "<p>" + markerData.rating + "</p>"
+    + "<p>" + markerData.type + "</p>" + "<p>" + markerData.pricing + "</p>";
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+    marker.addListener('mouseover', function() {
+    infowindow.open(map, marker);
+    });
+    marker.addListener('mouseout', function() {
+    infowindow.close();
+    });
   });
 }
 
   function newPlaces() {
-    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
+    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
     $.ajax({
       url: currentMap,
        type: 'GET',
