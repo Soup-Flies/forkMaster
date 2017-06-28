@@ -36,9 +36,9 @@ function testUserInput() {
             zip.length.trim();
           }
         };
-
+  
   if ($("#inputCity") == true) {
-    testUserInput
+
   }
 
 };
