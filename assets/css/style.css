@@ -1,87 +1,58 @@
-#main {
-  font-size: 12px;
-}
-
 #map {
-    height: 50vh;
-    width: 70vw;
-    float: left;
-    margin-bottom: 100px;
-    margin-right: 20px;
+    height: 75vh;
+}
+
+h1 {
+  font-size: 100px;
+}
+
+.border {
+  border: 2px solid black;
+  min-height: 40px;
+}
+
+.propTest {
+  height: 100px;
+}
+
+.mapSection {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border: solid 2px black;
+}
+
+.propTest {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+#individualProps {
+  float: right;
+  max-height: 75vh;
+  overflow-y: scroll;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+@media (max-width: 990px) {
+  #individualProps {
+    /*Make this value equal to height of 2 property listings*/
+    max-height: 150px;
+    margin-bottom: 15px;
   }
-
-html, body {
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    background-image: url(buildings.jpg);
-    color: black;
-    font-family: 'Sans-serif','Arial', 'Helvetica Neue', 'Helvetica';
-    width: 110vw;
-    font-size: 22px;
 }
 
-.dropdown:hover .dropbtn {
-    background-color: blue;
+.footer {
+  margin-top: 35px;
 }
 
-
-.dropbtn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
+.amenitiesBar {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    right: 0;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-content a:hover {background-color: #f1f1f1}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.dropdown:hover .dropbtn {
-    background-color: #3e8e41;
-}
-#main-row {
-    display: inline;
-    float: left;
-    width: ;
-    height: ;
-
-
-}
-#main-colom {
-  width: auto;
-
-
-}
-.white-space {
-  width: autp;
-  height: 400px;
-
-
+.fullDetails {
+  min-height: 500px;
+  border-left-style: dashed;
+  border-right-style: dashed;
 }
