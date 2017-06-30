@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Nearbuy</title>
 
     <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -14,124 +14,123 @@
 </head>
 <body>
 
-  <div class="container">
-   <div class="row">
-      <div class="col-xs-12 col-md-9">
-        <div class="form-group">
-          <label class="control-label" for="inputLarge"><h1>PRESTIGE WORLDWIDE</h1></label>
-          <br>
-          <!-- <br>
-          <br>
-          <br>
-          <br> -->
-          <div class="col-xs-12 col-sm-8">
-          <div class="row">
-            <div class="row">
-              <input class="col-xs-12 searchField" type="text" id="inputState" placeholder="State" required>
-            </div>
-            <div class="row">
-              <input class="col-xs-12 searchField" type="text" id="inputCity" placeholder="City" required>
-            </div>
-
-            <div class="row">
-              <input class="col-xs-12 searchField" type="text" id="inputZip" placeholder="Zip">
-            </div>
-            <div class="row">
-              <button type="button" class="btn btn-default btn-md col-xs-3 typeDefinition" id="buySelector" value="Buy">Buy</button>
-              <button type="button" class="btn btn-default btn-md col-xs-3 typeDefinition" id="rentSelector" value="Rent">Rent</button>
-              <button type="button" class="btn btn-default btn-md col-xs-3 typeDefinition" id="amenitiesSelector" value="amenities">Amenities</button>
-              <button type="button" class="btn btn-default btn-md col-xs-3 typeDefinition" id="investment" value="Investment">Investment</button>
-            </div>
-          </div>
-          </div>
+<div class="container text-center">
+  <div class="row">
+    <div class="productTitle"><h1>Nearbuy</h1></div>
+  </div>
+  <div class="row">
+    <form class="col-xs-12 userSearch" action="#">
+      <span class="col-xs-4"><label for="city"></label><input id="inputCity" class="col-xs-12" type="text" placeholder="City"></span>
+      <span class="col-xs-4"><label for="state"></label><input id="inputState" class="col-xs-12" type="text" placeholder="State" required></span>
+      <span class="col-xs-4"><label for="zip"></label><input id="inputZip" class="col-xs-12" type="text" placeholder="Zip"></span>
+      <div class="row">
+        <div class="submitButtons input-group-btn">
+          <!-- <div class="col-xs-4"> -->
+            <button class="col-xs-4 btn btn-default" type="button">Rent</button>
+          <!-- </div> -->
+          <!-- <div class="col-xs-4"> -->
+            <button class="col-xs-4 btn btn-default" type="button">Buy</button>
+          <!-- </div> -->
+          <!-- <div class="col-xs-4"> -->
+            <button class="col-xs-4 btn btn-default" type="button">Invest</button>
+          <!-- </div> -->
         </div>
       </div>
-    </div>
+    </form>
   </div>
-
-  <br>
-  <!-- <br>
-  <br>
-  <br>
-  <br>
-  <br> -->
-<div id="map"></div>
-
-  <div class="row" id="main-row">
-    <div class="col-xs-12 col-sm-6">
-
-      <div class="testInfo" id="paraInfo"></div>
-    </div>
-
-
-
-    <div class="panel-group">
-      <div class="col-xs-12 col-sm-6 col-md-4" id="main-colom">
-          <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title"><strong>Search Parameters</strong></h3>
-          </div>
-          </div>
-
-          <div class="panel-body">
-
-            <div class="dropdown">
-              <button class="dropbtn btn-primary">Price Range:</button>
-              <div class="dropdown-content">
-               <a id="priceRange1" href="#">xxx</a>
-               <a id="priceRange2" href="#">yyy</a>
-               <a id="priceRange3" href="#">zzz</a>
-              </div>
-            </div>
-
-            <div class="dropdown">
-            <button class="dropbtn btn-primary">Neighborhood Rating:</button>
-            <div class="dropdown-content">
-              <a id="hoodRating1" href="#">aaa</a>
-              <a id="hoodRating2" href="#">bbb</a>
-              <a id="hoodRating3" href="#">ccc</a>
-            </div>
-          </div>
-          <br>
-          <div class="dropdownSelectors">
-          <button class="dropbtn btn-primary">Neighborhood Highlights:</button>
-             <div id="dropdown content">
-              <a id="hoodHighlights1" href="#">aaa</a>
-              <a id="hoodHighlights2" href="#">bbb</a>
-              <a id="hoodHighlights3" href="#">ccc</a>
-             </div>
-          </div>
-
-              <ul class="dropdown-menu">
-               <li><a href="#">I want to live close to a library</a></li>
-               <li><a href="#">I want to live near a school</a></li>
-               &gt;
-               <li><a href="#">I want to live near a park</a></li>
-               &gt;
-               <li><a href="#">I want to live near public transportation</a></li>
-               &gt;
-               <li><a href="#">I want to live near my favorite restaurant</a></li>
-             </ul>
-
-            <div class="btn-group">
-              <a href="#" class="btn btn-default">Distance from my favortie place</a>
-              <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Walking distance</a></li>
-                <li><a href="#">2 miles</a></li>
-                <li><a href="#">within 5 miles</a></li>
-                <li><a href="#">within 10 miles</a></li>
-              </ul>
-            </div>
+  <div class="row">
+    <div class="border amenitiesBar col-xs-12">
+      <div class="amenitiesHeading"></div>
+      <div class="amenitiesCont">
+        <form action="#">Amenities bar <br>
+        Expandable and Collapsable</form>
       </div>
     </div>
   </div>
 </div>
 
-<footer class="white-space"></footer>
+<div class="container mapSection">
+  <div class="row">
+    <div class="col-xs-12 col-md-4" id="individualProps">
+      <div class="border propTest">
+        <div>1 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>2 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>3 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>4 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>5 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>6 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>7 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>8 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>9 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>10 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>11 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>12 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>13 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>14 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>15 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>16 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>17 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>18 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>19 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+      <div class="border propTest">
+        <div>20 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-8" id="map"></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="border fullDetails col-xs-12">
+      <p>Tighter scope information here</p>
+    </div>
+  </div>
+</div>
+
+  <div class="border footer">
+    Footer!
+  </div>
+
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I&libraries=places&callback=initMap" async defer></script>
   <script src="./assets/js/logic.js"></script>
-</footer>
 
 </div>
 </body>
