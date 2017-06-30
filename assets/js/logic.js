@@ -12,6 +12,7 @@ var currentSearch = {
 
 var zillowRegionChildren = "http://www.zillow.com/webservice/GetRegionChildren.htm?";
 var zillowEstimate = "http://www.zillow.com/webservice/GetSearchResults.htm";
+var zillowGetComps = "http://www.zillow.com/webservice/GetDeepComps.htm?";
 var zillowKey = "X1-ZWz195aafxhlor_4vl2o";
 var googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
 var googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
@@ -123,6 +124,14 @@ function apiLinkBuild(apiType) {
     return tempUrl;
   } else if (apiType == "googlePlaces") {
     var tempUrl;
+  } else if (apiType == "zillowGetComps") {
+    var tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
+
+    /*
+    intake user search, manipulate browser to zillow page, search for users locations.
+    grab 1st card by class of some sort? parse url for the zpid
+    */
+    return tempUrl;
   }
 
 }
@@ -130,7 +139,6 @@ function apiLinkBuild(apiType) {
 //Call api for zillow
 function zillowApi(url) {
   var url = `${corsWorkaround}${url}`;
-
   var apiUrl = url;
   $.ajax({
     method: "GET",
@@ -143,7 +151,7 @@ function zillowApi(url) {
       dataJSON = xmlToJson(data);
       console.log(dataJSON);
       var temp = dataJSON["RegionChildren:regionchildren"].response.region;
-      searchInput.id = temp.id["#text"];
+      searchInput.id = dataJSON["RegionChildren:regionchildren"].response.list.region[0].id["#text"];
       searchInput.lat = parseFloat(temp.latitude["#text"]);
       searchInput.long = parseFloat(temp.longitude["#text"]);
       console.log(searchInput);
@@ -154,6 +162,26 @@ function zillowApi(url) {
     })
 };
 
+function zillowResidential(url) {
+  console.log(url);
+  var url = `${corsWorkaround}${url}`;
+  var apiUrl = url;
+  $.ajax({
+    method: "GET",
+    url: apiUrl,
+    headers: {
+      "Accept": "application/json"
+    }
+  })
+  .done(function(data) {
+    dataJSON = xmlToJson(data);
+    console.log("Residential Properties Data", dataJSON);
+  })
+}
+
+function appendResidential(properties) {
+  var $div = $("<div>");
+}
 
 //Callback function from HTML to start the google map
 function initMap() {
@@ -170,7 +198,7 @@ function initMap() {
     if (initialLoad) {
       initialLoad = false;
     } else {
-      newPlaces(geo);
+      newPlaces();
     }
 
 }
