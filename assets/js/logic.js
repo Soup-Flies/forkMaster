@@ -43,7 +43,7 @@ function testUserInput() {
   } else {
     $("#inputZip").html("Please enter a 5 digit zip code");
   };
-        
+  
   if ($("#inputCity") == true) {
     this.val.function(initMap(addyDeets));
   } else if ($("#inputState") == true) {
@@ -171,16 +171,21 @@ function initMap() {
     if (initialLoad) {
       initialLoad = false;
     } else {
-      newPlaces();
+      newPlaces(geo);
     }
 
 }
 
 //New api call to google for the map information
   function newPlaces() {
-    console.log(searchInput);
-    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+    if (searchInput.lat) {
+      currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+    } else {
+      currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
+    }
+
     currentMap = `${corsWorkaround}${currentMap}`;
+    console.log(currentMap);
     $.ajax({
       url: currentMap,
        type: 'GET',
@@ -218,6 +223,9 @@ function updateMap(data) {
       map: map,
       customInfo: markerData
     });
+    marker.addListener('click', function() {
+    infowindow.open(map, marker);
+    });
     var contentString =  "<h4>" + markerData.name + "</h4>" + "<p>" + markerData.pricing + "</p>" + "<p>" + markerData.rating + "</p>"
     + "<p>" + markerData.type + "</p>" + "<p>" + markerData.pricing + "</p>";
     var infowindow = new google.maps.InfoWindow({
@@ -234,26 +242,7 @@ function updateMap(data) {
     var infowindow = new google.maps.InfoWindow({
       content: contentString
     });
-    console.log(marker);
-    marker.addListener('click', function() {
-    infowindow.open(map, marker);
-    });
   }
-
-
-  function newPlaces() {
-    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
-    $.ajax({
-      url: currentMap,
-       type: 'GET',
-       crossDomain: true,
-       success: function(response) {
-         var data = response.results;
-        //  console.log(' WHAT IS OUR RESPONSE DATA', response.results);
-         updateMap(data);
-       },
-    })
-  };
 
   function placesData() {
     var request = {
@@ -269,7 +258,7 @@ function updateMap(data) {
     var map;
 
     //click handling for search button
-    $(".typeDefinition").click("on", function(event) {
+    $(".submitButtons").click("on", function(event) {
       event.preventDefault();
       //userinputvalidation
       updateCurrentSearch(this);
