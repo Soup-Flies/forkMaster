@@ -42,7 +42,7 @@ function testUserInput() {
           $("#inputCity").val().function(initMap(addyDeets));
         }
   };
-  
+
   if ($("#inputCity") == true) {
     this.val.function(initMap(addyDeets));
   } else if ($("#inputState") == true) {
@@ -217,6 +217,9 @@ function updateMap(data) {
       map: map,
       customInfo: markerData
     });
+    marker.addListener('click', function() {
+    infowindow.open(map, marker);
+    });
     var contentString =  "<h4>" + markerData.name + "</h4>" + "<p>" + markerData.pricing + "</p>" + "<p>" + markerData.rating + "</p>"
     + "<p>" + markerData.type + "</p>" + "<p>" + markerData.pricing + "</p>";
     var infowindow = new google.maps.InfoWindow({
@@ -232,10 +235,6 @@ function updateMap(data) {
     var contentString = "quotes";
     var infowindow = new google.maps.InfoWindow({
       content: contentString
-    });
-    console.log(marker);
-    marker.addListener('click', function() {
-    infowindow.open(map, marker);
     });
   }
 
@@ -268,7 +267,7 @@ function updateMap(data) {
     var map;
 
     //click handling for search button
-    $(".typeDefinition").click("on", function(event) {
+    $(".submitButtons").click("on", function(event) {
       event.preventDefault();
       //userinputvalidation
       updateCurrentSearch(this);
