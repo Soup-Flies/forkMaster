@@ -170,16 +170,21 @@ function initMap() {
     if (initialLoad) {
       initialLoad = false;
     } else {
-      newPlaces();
+      newPlaces(geo);
     }
 
 }
 
 //New api call to google for the map information
   function newPlaces() {
-    console.log(searchInput);
-    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+    if (searchInput.lat) {
+      currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+    } else {
+      currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
+    }
+
     currentMap = `${corsWorkaround}${currentMap}`;
+    console.log(currentMap);
     $.ajax({
       url: currentMap,
        type: 'GET',
@@ -237,21 +242,6 @@ function updateMap(data) {
       content: contentString
     });
   }
-
-
-  function newPlaces() {
-    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
-    $.ajax({
-      url: currentMap,
-       type: 'GET',
-       crossDomain: true,
-       success: function(response) {
-         var data = response.results;
-        //  console.log(' WHAT IS OUR RESPONSE DATA', response.results);
-         updateMap(data);
-       },
-    })
-  };
 
   function placesData() {
     var request = {
