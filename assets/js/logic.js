@@ -130,6 +130,10 @@ function apiLinkBuild(apiType) {
     /*
     intake user search, manipulate browser to zillow page, search for users locations.
     grab 1st card by class of some sort? parse url for the zpid
+    instead
+    callback to the page built from the search by user https://www.zillow.com/homes/for_sale/Lakewood-CO/
+    , grab a dom element based on parent class zsg-photo-card-caption
+    return that and parse the id of the home itself
     */
     return tempUrl;
   }
