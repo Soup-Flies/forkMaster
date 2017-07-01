@@ -125,6 +125,8 @@ function apiLinkBuild(apiType) {
   } else if (apiType == "googlePlaces") {
     var tempUrl;
   } else if (apiType == "zillowGetComps") {
+
+    zillowJSONP()
     var tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
 
     /*
@@ -138,6 +140,22 @@ function apiLinkBuild(apiType) {
     return tempUrl;
   }
 
+}
+
+function zillowJSONP() {
+    var src = `https://www.zillow.com/homes/${searchInput.city}-${searchInput.state}/?callback=zillowWebReturn`
+  console.log(src);
+  // $("head").append($src);
+  $.getScript(src)
+    .done(function(data, textStatus) {
+      console.log(data);
+      console.log(textStatus);
+    })
+}
+
+function zillowWebReturn(data) {
+  console.log("I GOT CALLED!");
+  console.log(data);
 }
 
 //Call api for zillow
