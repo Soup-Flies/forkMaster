@@ -33,17 +33,18 @@ function testUserInput() {
       {"state" : ""}]
   };
 
+  if ($("#inputState") == true) {
+    this.val().function(initMap(addyDeets));
+  } else {
+    window.alert("Please enter a city!");
+  };
+
   if ($("#inputZip").val().length() == 5) {
     this.val().function(initMap(addyDeets));
   } else {
     $("#inputZip").html("Please enter a 5 digit zip code");
-        if ($("#inputState") == true) {
-          this.val().function(initMap(addyDeets));
-        } else {
-          $("#inputCity").val().function(initMap(addyDeets));
-        }
   };
-
+  
   if ($("#inputCity") == true) {
     this.val.function(initMap(addyDeets));
   } else if ($("#inputState") == true) {
