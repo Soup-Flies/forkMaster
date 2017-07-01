@@ -12,6 +12,7 @@ var currentSearch = {
 
 var zillowRegionChildren = "http://www.zillow.com/webservice/GetRegionChildren.htm?";
 var zillowEstimate = "http://www.zillow.com/webservice/GetSearchResults.htm";
+var zillowGetComps = "http://www.zillow.com/webservice/GetDeepComps.htm?";
 var zillowKey = "X1-ZWz195aafxhlor_4vl2o";
 var googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
 var googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
@@ -32,17 +33,18 @@ function testUserInput() {
       {"state" : ""}]
   };
 
+  if ($("#inputState") == true) {
+    this.val().function(initMap(addyDeets));
+  } else {
+    window.alert("Please enter a city!");
+  };
+
   if ($("#inputZip").val().length() == 5) {
     this.val().function(initMap(addyDeets));
   } else {
     $("#inputZip").html("Please enter a 5 digit zip code");
-        if ($("#inputState") == true) {
-          this.val().function(initMap(addyDeets));
-        } else {
-          $("#inputCity").val().function(initMap(addyDeets));
-        }
   };
-  
+
   if ($("#inputCity") == true) {
     this.val.function(initMap(addyDeets));
   } else if ($("#inputState") == true) {
@@ -123,14 +125,47 @@ function apiLinkBuild(apiType) {
     return tempUrl;
   } else if (apiType == "googlePlaces") {
     var tempUrl;
+  } else if (apiType == "zillowGetComps") {
+
+    // zillowJSONP()
+    // var tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
+    var tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=68061007&count=25&rentzestimate=true`;
+    /*
+    intake user search, manipulate browser to zillow page, search for users locations.
+    grab 1st card by class of some sort? parse url for the zpid
+    instead
+    callback to the page built from the search by user https://www.zillow.com/homes/for_sale/Lakewood-CO/
+    , grab a dom element based on parent class zsg-photo-card-caption
+    return that and parse the id of the home itself
+    */
+    return tempUrl;
   }
 
+}
+
+function zillowTesting() {
+  zillowResidential(apiLinkBuild("zillowGetComps"));
+}
+
+function zillowJSONP() {
+    var src = `https://www.zillow.com/homes/${searchInput.city}-${searchInput.state}/?callback=zillowWebReturn`
+  console.log(src);
+  // $("head").append($src);
+  $.getScript(src)
+    .done(function(data, textStatus) {
+      console.log(data);
+      console.log(textStatus);
+    })
+}
+
+function zillowWebReturn(data) {
+  console.log("I GOT CALLED!");
+  console.log(data);
 }
 
 //Call api for zillow
 function zillowApi(url) {
   var url = `${corsWorkaround}${url}`;
-
   var apiUrl = url;
   $.ajax({
     method: "GET",
@@ -143,7 +178,7 @@ function zillowApi(url) {
       dataJSON = xmlToJson(data);
       console.log(dataJSON);
       var temp = dataJSON["RegionChildren:regionchildren"].response.region;
-      searchInput.id = temp.id["#text"];
+      searchInput.id = dataJSON["RegionChildren:regionchildren"].response.list.region[0].id["#text"];
       searchInput.lat = parseFloat(temp.latitude["#text"]);
       searchInput.long = parseFloat(temp.longitude["#text"]);
       console.log(searchInput);
@@ -154,6 +189,26 @@ function zillowApi(url) {
     })
 };
 
+function zillowResidential(url) {
+  console.log(url);
+  var url = `${corsWorkaround}${url}`;
+  var apiUrl = url;
+  $.ajax({
+    method: "GET",
+    url: apiUrl,
+    headers: {
+      "Accept": "application/json"
+    }
+  })
+  .done(function(data) {
+    dataJSON = xmlToJson(data);
+    console.log("Residential Properties Data", dataJSON);
+  })
+}
+
+function appendResidential(properties) {
+  var $div = $("<div>");
+}
 
 //Callback function from HTML to start the google map
 function initMap() {
@@ -177,9 +232,14 @@ function initMap() {
 
 //New api call to google for the map information
   function newPlaces() {
-    console.log(searchInput);
-    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+    if (searchInput.lat) {
+      currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+    } else {
+      currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
+    }
+
     currentMap = `${corsWorkaround}${currentMap}`;
+    console.log(currentMap);
     $.ajax({
       url: currentMap,
        type: 'GET',
@@ -217,6 +277,9 @@ function updateMap(data) {
       map: map,
       customInfo: markerData
     });
+    marker.addListener('click', function() {
+    infowindow.open(map, marker);
+    });
     var contentString =  "<h4>" + markerData.name + "</h4>" + "<p>" + markerData.pricing + "</p>" + "<p>" + markerData.rating + "</p>"
     + "<p>" + markerData.type + "</p>" + "<p>" + markerData.pricing + "</p>";
     var infowindow = new google.maps.InfoWindow({
@@ -233,26 +296,7 @@ function updateMap(data) {
     var infowindow = new google.maps.InfoWindow({
       content: contentString
     });
-    console.log(marker);
-    marker.addListener('click', function() {
-    infowindow.open(map, marker);
-    });
   }
-
-
-  function newPlaces() {
-    currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
-    $.ajax({
-      url: currentMap,
-       type: 'GET',
-       crossDomain: true,
-       success: function(response) {
-         var data = response.results;
-        //  console.log(' WHAT IS OUR RESPONSE DATA', response.results);
-         updateMap(data);
-       },
-    })
-  };
 
   function placesData() {
     var request = {
@@ -268,7 +312,7 @@ function updateMap(data) {
     var map;
 
     //click handling for search button
-    $(".typeDefinition").click("on", function(event) {
+    $(".submitButtons").click("on", function(event) {
       event.preventDefault();
       //userinputvalidation
       updateCurrentSearch(this);
