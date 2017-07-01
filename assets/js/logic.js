@@ -44,7 +44,7 @@ function testUserInput() {
   } else {
     $("#inputZip").html("Please enter a 5 digit zip code");
   };
-  
+
   if ($("#inputCity") == true) {
     this.val.function(initMap(addyDeets));
   } else if ($("#inputState") == true) {
@@ -127,9 +127,9 @@ function apiLinkBuild(apiType) {
     var tempUrl;
   } else if (apiType == "zillowGetComps") {
 
-    zillowJSONP()
-    var tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
-
+    // zillowJSONP()
+    // var tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
+    var tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=68061007&count=25&rentzestimate=true`;
     /*
     intake user search, manipulate browser to zillow page, search for users locations.
     grab 1st card by class of some sort? parse url for the zpid
@@ -141,6 +141,10 @@ function apiLinkBuild(apiType) {
     return tempUrl;
   }
 
+}
+
+function zillowTesting() {
+  zillowResidential(apiLinkBuild("zillowGetComps"));
 }
 
 function zillowJSONP() {
