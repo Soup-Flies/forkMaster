@@ -132,7 +132,7 @@ function initMap() {
     if (initialLoad) {
       initialLoad = false;
     } else {
-      newPlaces(geo);
+      newPlaces();
     }
 
 }
