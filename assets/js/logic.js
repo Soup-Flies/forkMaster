@@ -22,54 +22,15 @@ var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?l
 var searchInput = {};
 var corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 
-
-function testUserInput() {
-  //test what kind and if the user input was valid, then build object for search
-
-  var addyDeets = { "address" : [
-      {"zip" : ""},
-      {"city" : ""},
-      {"state" : ""}]
-  };
-
-  if ($("#inputState") == true) {
-    this.val().function(initMap(addyDeets));
-  } else {
-    window.alert("Please enter a city!");
-  };
-
-  if ($("#inputZip").val().length() == 5) {
-    this.val().function(initMap(addyDeets));
-  } else {
-    $("#inputZip").html("Please enter a 5 digit zip code");
-  };
-  
-  if ($("#inputCity") == true) {
-    this.val.function(initMap(addyDeets));
-  } else if ($("#inputState") == true) {
-    $("#inputState").val().function(initMap(addyDeets));
-  } else {
-    $("#inputZip").val().function(initMap(addyDeets));
-  };
-
-  if ($("#inputState") == true) {
-    this.val().function(initMap(addyDeets));
-  } else if ($("#inputCity") == true) {
-    $("#inputCity").val().function(initMap(addyDeets));
-  } else {
-    $("#inputZip").val().function(initMap(addyDeets));
-  };
-};
-
 //take in user input for the searches to happen
   function updateCurrentSearch(data) {
     searchInput = {};
     searchInput = {
       id : "",
-      zip : $("#inputZip").val(),
-      state : $("#inputState").val(),
-      city : $("#inputCity").val(),
-      type : data.value,
+      zip : data.zip,
+      state : data.state,
+      city : data.city,
+      type : data.type,
       venueType : "restaurant"
     }
     console.log(searchInput);
@@ -142,7 +103,7 @@ function zillowApi(url) {
   })
     .done(function(data) {
       dataJSON = xmlToJson(data);
-      console.log(dataJSON);
+      console.log("Zillow Api Return information", dataJSON);
       var temp = dataJSON["RegionChildren:regionchildren"].response.region;
       searchInput.id = temp.id["#text"];
       searchInput.lat = parseFloat(temp.latitude["#text"]);
@@ -185,7 +146,6 @@ function initMap() {
     }
 
     currentMap = `${corsWorkaround}${currentMap}`;
-    console.log(currentMap);
     $.ajax({
       url: currentMap,
        type: 'GET',
@@ -193,7 +153,7 @@ function initMap() {
        success: function(response) {
          console.log(response);
          var data = response.results;
-         console.log(' WHAT IS OUR RESPONSE DATA', response.results);
+         console.log('Google Places Response Information', response.results);
          updateMap(data);
        },
     })
@@ -254,14 +214,45 @@ function updateMap(data) {
     });
   }
 
+  $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+
   $(document).ready(function() {
     var map;
 
     //click handling for search button
-    $(".submitButtons").click("on", function(event) {
-      event.preventDefault();
+    $(".submitChild").click("on", function(event) {
+      console.log('button was clicked', $(this));
+      console.log('the button type is', $(this).text());
+
+      var submitData = {
+        city: $('#inputCity').val(),
+        state: $('#inputState').val(),
+        zip: $('#inputZip').val(),
+        type: $(this).text()
+      }
+
+      if (submitData.state) {
+        //  The user has input their state
+        updateCurrentSearch(submitData);
+      } else {
+        //  The user has not added a state, and they need to
+        $('.tooltipHolder').tooltip("show");
+        $('#inputState').css({"border":"1px solid red"});
+        console.log('add your state');
+      }
+
+      // var stateInput = $('#inputState').val();
+      // console.log('state input', stateInput);
+      // if (!stateInput) {
+      //   console.log('You need to input a state');
+      // }
+
+
+      // event.preventDefault();
       //userinputvalidation
-      updateCurrentSearch(this);
+      //updateCurrentSearch(submitData);
       // newPlaces();
 
 
@@ -275,4 +266,5 @@ function updateMap(data) {
       console.log(event.keyCode);
     });
     newPlaces();
+
   })
