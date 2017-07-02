@@ -130,15 +130,9 @@ function apiLinkBuild(apiType) {
     // zillowJSONP()
     // var tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
     var tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=68061007&count=25&rentzestimate=true`;
-    /*
-    intake user search, manipulate browser to zillow page, search for users locations.
-    grab 1st card by class of some sort? parse url for the zpid
-    instead
-    callback to the page built from the search by user https://www.zillow.com/homes/for_sale/Lakewood-CO/
-    , grab a dom element based on parent class zsg-photo-card-caption
-    return that and parse the id of the home itself
-    */
     return tempUrl;
+  } else if (apiType == "webScrape") {
+    var tempUrl = `${corsWorkaround}http://www.zillow.com/homes/${searchInput.city}-${searchInput.state} .zsg-photo-card-overlay-link`;
   }
 
 }
@@ -147,21 +141,20 @@ function zillowTesting() {
   zillowResidential(apiLinkBuild("zillowGetComps"));
 }
 
-function zillowJSONP() {
-    var src = `https://www.zillow.com/homes/${searchInput.city}-${searchInput.state}/?callback=zillowWebReturn`
-  console.log(src);
-  // $("head").append($src);
-  $.getScript(src)
-    .done(function(data, textStatus) {
-      console.log(data);
-      console.log(textStatus);
+function zillowWebScrape() {
+  $(".footer").load("https://cors-anywhere.herokuapp.com/http://www.zillow.com/homes/Lakewood-Colorado .zsg-photo-card-overlay-link", function(data) {
+    console.log(data);
+    var myRe = /data-zpid="(\d*)/g;
+    var myArray = data.match(myRe);
+    console.log(myArray);
+    var tempArray = [];
+    $.each(myArray, function(index, value) {
+      tempArray.push(value.slice(11, (value.length -1)))
     })
+    console.log(tempArray);
+  });
 }
 
-function zillowWebReturn(data) {
-  console.log("I GOT CALLED!");
-  console.log(data);
-}
 
 //Call api for zillow
 function zillowApi(url) {
