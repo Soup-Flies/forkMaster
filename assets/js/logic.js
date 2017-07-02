@@ -22,7 +22,7 @@ var searchRadius = (1609.344 * 3).toString();
 var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
 var searchInput = {};
 var corsWorkaround = "https://cors-anywhere.herokuapp.com/";
-
+var map;
 
 function testUserInput() {
   //test what kind and if the user input was valid, then build object for search
@@ -66,15 +66,15 @@ function testUserInput() {
   function updateCurrentSearch(data) {
     searchInput = {};
     searchInput = {
-      id : "",
+      id : null,
       zip : $("#inputZip").val(),
       state : $("#inputState").val(),
       city : $("#inputCity").val(),
       type : data.value,
       venueType : "restaurant"
     }
-    console.log(searchInput);
-    zillowApi(apiLinkBuild("zillowRegion", searchInput));
+    zillowWebScrape();
+    zillowApi(apiLinkBuild("zillowRegion"));
   };
 
 
@@ -118,7 +118,6 @@ function xmlToJson(xml) {
 };
 
 function apiLinkBuild(apiType) {
-  //update to switch for clarity?
   //build url for api depending on user input
   if (apiType == "zillowRegion") {
     var tempUrl = `${zillowRegionChildren}zws-id=${zillowKey}&state=${searchInput.state}&city=${searchInput.city}&childtype=neighborhood`;
@@ -126,45 +125,32 @@ function apiLinkBuild(apiType) {
   } else if (apiType == "googlePlaces") {
     var tempUrl;
   } else if (apiType == "zillowGetComps") {
-
-    // zillowJSONP()
-    // var tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
-    var tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=68061007&count=25&rentzestimate=true`;
-    /*
-    intake user search, manipulate browser to zillow page, search for users locations.
-    grab 1st card by class of some sort? parse url for the zpid
-    instead
-    callback to the page built from the search by user https://www.zillow.com/homes/for_sale/Lakewood-CO/
-    , grab a dom element based on parent class zsg-photo-card-caption
-    return that and parse the id of the home itself
-    */
-    return tempUrl;
+    zillowWebScrape();
   }
+};
 
-}
 
-function zillowTesting() {
-  zillowResidential(apiLinkBuild("zillowGetComps"));
-}
 
-function zillowJSONP() {
-    var src = `https://www.zillow.com/homes/${searchInput.city}-${searchInput.state}/?callback=zillowWebReturn`
-  console.log(src);
-  // $("head").append($src);
-  $.getScript(src)
-    .done(function(data, textStatus) {
-      console.log(data);
-      console.log(textStatus);
+function zillowWebScrape() {
+  var tempArray = [];
+  var tempUrl;
+  $(".footer").load(`${corsWorkaround}http://www.zillow.com/homes/${searchInput.city}-${searchInput.state} .zsg-photo-card-overlay-link`, function(data) {
+    var myRe = /(?:data-zpid=")(\d*)/g;
+    var myArray = data.match(myRe);
+    $.each(myArray, function(index, value) {
+      tempArray.push(value.slice(11, (value.length -1)))
     })
+    searchInput.id = tempArray[1];
+    tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
+    console.log(tempUrl);
+    zillowResidential(tempUrl);
+  });
 }
 
-function zillowWebReturn(data) {
-  console.log("I GOT CALLED!");
-  console.log(data);
-}
 
 //Call api for zillow
 function zillowApi(url) {
+  console.log(url);
   var url = `${corsWorkaround}${url}`;
   var apiUrl = url;
   $.ajax({
@@ -178,7 +164,6 @@ function zillowApi(url) {
       dataJSON = xmlToJson(data);
       console.log(dataJSON);
       var temp = dataJSON["RegionChildren:regionchildren"].response.region;
-      searchInput.id = dataJSON["RegionChildren:regionchildren"].response.list.region[0].id["#text"];
       searchInput.lat = parseFloat(temp.latitude["#text"]);
       searchInput.long = parseFloat(temp.longitude["#text"]);
       console.log(searchInput);
@@ -212,6 +197,7 @@ function appendResidential(properties) {
 
 //Callback function from HTML to start the google map
 function initMap() {
+  console.log("I'm Google", google);
   // console.log(currentSearch);
   if (initialLoad) {
     var geoLocation = {lat: 39.764339, lng: -104.85511};
@@ -256,7 +242,7 @@ function initMap() {
 
 //New call to update maps with search parameters passed by user
 function updateMap(data) {
-  console.log(data);
+  // console.log(data);
   $.each(data, function(index, value) {
     var temp = data[index].geometry.location;
     var loc = {
@@ -285,12 +271,12 @@ function updateMap(data) {
     var infowindow = new google.maps.InfoWindow({
       content: contentString
     });
-    marker.addListener('mouseover', function() {
-    infowindow.open(map, marker);
-    });
-    marker.addListener('mouseout', function() {
-    infowindow.close();
-    });
+    // marker.addListener('mouseover', function() {
+    // infowindow.open(map, marker);
+    // });
+    // marker.addListener('mouseout', function() {
+    // infowindow.close();
+    // });
   });
     var contentString = "quotes";
     var infowindow = new google.maps.InfoWindow({
@@ -309,17 +295,13 @@ function updateMap(data) {
   }
 
   $(document).ready(function() {
-    var map;
 
     //click handling for search button
     $(".submitButtons").click("on", function(event) {
       event.preventDefault();
       //userinputvalidation
       updateCurrentSearch(this);
-      // newPlaces();
 
-
-      // zillowApi($("#userSelection").val())
     });
     //enter key handling for search button
     $("#keys").on("keyup", function(event) {
