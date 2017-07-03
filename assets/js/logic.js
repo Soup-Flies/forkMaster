@@ -135,15 +135,8 @@ function zillowWebScrape() {
   var tempArray = [];
   var tempUrl;
   $(".footer").load(`${corsWorkaround}http://www.zillow.com/homes/${searchInput.city}-${searchInput.state} .zsg-photo-card-overlay-link`, function(data) {
-    var myRe = /(?:data-zpid=")(\d*)/g;
-    var myArray = data.match(myRe);
-    $.each(myArray, function(index, value) {
-      tempArray.push(value.slice(11, (value.length -1)))
-    })
-    searchInput.id = tempArray[1];
-    tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
-    console.log(tempUrl);
-    zillowResidential(tempUrl);
+    // console.log("Returned scrape DATA", data);
+    zillowResidential(data);
   });
 }
 
@@ -174,31 +167,71 @@ function zillowApi(url) {
     })
 };
 
-function zillowResidential(url) {
-  console.log(url);
-  var url = `${corsWorkaround}${url}`;
-  var apiUrl = url;
-  $.ajax({
-    method: "GET",
-    url: apiUrl,
-    headers: {
-      "Accept": "application/json"
-    }
+
+
+
+
+
+
+function zillowResidential(zpidData) {
+  var tempArray = [];
+  var myRe = /(?: data-zpid=")(\d+)" /g;
+  var myArray = zpidData.match(myRe);
+  $.each(myArray, function(index, value) {
+    tempArray.push(value.slice(12, (value.length -2)))
   })
-  .done(function(data) {
-    dataJSON = xmlToJson(data);
-    console.log("Residential Properties Data", dataJSON);
-  })
+
+  var fetchData = function(tempArray) {
+    console.log("RETURNED ARRAY", tempArray);
+    searchInput.id = tempArray[0];
+    tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
+    console.log(tempUrl);
+    var apiUrl = `${corsWorkaround}${tempUrl}`;
+    $.ajax({
+      method: "GET",
+      url: apiUrl,
+      headers: {
+        "Accept": "application/json"
+      }
+    })
+    .done(function(data) {
+      data = xmlToJson(data);
+      console.log(data);
+      var errorTest = data["Comps:comps"].message.code["#text"];
+      if (errorTest != "0") {
+        console.log("ERROR DETECTED: ", errorTest);
+        var slicedArray = tempArray.slice(1);
+        console.log(slicedArray);
+        fetchData(slicedArray);
+      } else {
+        appendResidential(data)
+      }
+
+    })
+    .fail(function(data) {
+      console.log("ERROR: ", data);
+    })
+  }
+  fetchData(tempArray);
 }
 
-function appendResidential(properties) {
-  var $div = $("<div>");
+function appendResidential(filteredProperties) {
+  console.log(filteredProperties);
+  var property = filteredProperties["Comps:comps"].response.properties.comparables.comp;
+  console.log(property);
+  $("#individualProps").empty();
+  $.each(property, function(index, value) {
+    var $div = $("<div class='propTest border'>");
+    var $p = $("<p>");
+    $p.html(value.address.street["#text"]);
+    $div.append($p);
+    $("#individualProps").append($div);
+  })
+
 }
 
 //Callback function from HTML to start the google map
 function initMap() {
-  console.log("I'm Google", google);
-  // console.log(currentSearch);
   if (initialLoad) {
     var geoLocation = {lat: 39.764339, lng: -104.85511};
   } else {
@@ -225,15 +258,14 @@ function initMap() {
     }
 
     currentMap = `${corsWorkaround}${currentMap}`;
-    console.log(currentMap);
+    // console.log(currentMap);
     $.ajax({
       url: currentMap,
        type: 'GET',
        crossDomain: true,
        success: function(response) {
-         console.log(response);
          var data = response.results;
-         console.log(' WHAT IS OUR RESPONSE DATA', response.results);
+         console.log('Google Places return data', response.results);
          updateMap(data);
        },
     })
