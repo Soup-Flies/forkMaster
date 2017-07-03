@@ -79,7 +79,6 @@ function testUserInput() {
     zillowApi(apiLinkBuild("zillowRegion"));
   };
 
-
 // Changes XML to JSON -- Needed for all Zillow Searches
 function xmlToJson(xml) {
 
@@ -141,7 +140,6 @@ function zillowWebScrape() {
   });
 }
 
-
 //Call api for zillow
 function zillowApi(url) {
   console.log(url);
@@ -175,7 +173,7 @@ function zillowApi(url) {
 // then runs a recursive function (a function that calls itself until expected result in this case)
 function zillowResidential(zpidData) {
   var tempArray = [];
-  //this is the "Regex" a method in coding to search through strings in coding
+  //this is the "Regex" a method in programming to search through strings
   var myRe = /(?: data-zpid=")(\d+)" /g;
   //put results into an array
   var myArray = zpidData.match(myRe);
@@ -212,15 +210,15 @@ function zillowResidential(zpidData) {
       if (errorTest != "0") {
         console.log("ERROR DETECTED: ", errorTest);
         //slice the first entry off of the array
+        //which is the bad result
         var slicedArray = tempArray.slice(1);
         console.log(slicedArray);
-        //and pass it back into the "fetchData" function - this is the recursive part
+        //and pass it back into the "fetchData" function - this is the recursive part where a function calls itself from inside itself.
         fetchData(slicedArray);
       } else {
         //if we did not have an error, proceed in appending returned data to our page
-        appendResidential(data)
+        appendResidential(data);
       }
-
     })
     .fail(function(data) {
       //failure on making the actual call - this is a failure in communication with the server in this case
@@ -241,9 +239,12 @@ function appendResidential(filteredProperties) {
   $("#individualProps").empty();
   //loop over the properties returned from Comp data to populate into individualProps element
   $.each(property, function(index, value) {
-    var $div = $("<div class='propTest border'>");
+    var $div = $("<div class='prop border'>");
+    //store object data into the div element for later use to populate specific details
+    $div.attr("json-data", JSON.stringify(value));
     var $p = $("<p>");
-    $p.html(value.address.street["#text"]);
+    $p.html((index + 1 ) +": " + value.address.street["#text"]);
+    $p.append(`<br>${value.address.city["#text"]}, ${value.address.state["#text"]} ${value.address.zipcode["#text"]}`);
     $div.append($p);
     $("#individualProps").append($div);
   })
@@ -272,17 +273,16 @@ function initMap() {
       //if the user has searched then update the google places information
       newPlaces();
     }
-
 }
 
 //New api call to google for the map information
   function newPlaces() {
+    var baseUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
     if (searchInput.lat) {
-      currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+      currentMap = `${baseUrl}${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
     } else {
-      currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
+      currentMap = `${baseUrl}${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
     }
-
     currentMap = `${corsWorkaround}${currentMap}`;
     // console.log(currentMap);
     $.ajax({
@@ -296,7 +296,6 @@ function initMap() {
        },
     })
   };
-
 
 //New call to update maps with search parameters passed by user
 function updateMap(data) {
@@ -353,7 +352,6 @@ function updateMap(data) {
   }
 
   $(document).ready(function() {
-
     //click handling for search button
     $(".submitButtons").click("on", function(event) {
       event.preventDefault();
@@ -361,7 +359,7 @@ function updateMap(data) {
       updateCurrentSearch(this);
 
     });
-    //enter key handling for search button
+    //enter key handling for search button -- still needs element to hook onto
     $("#keys").on("keyup", function(event) {
       if (event.keyCode == 13) {
         event.preventDefault();
@@ -370,7 +368,13 @@ function updateMap(data) {
       } else {
         //enter key not pressed
       }
-
-    });
+      });
+      //use delegated click to link onto each property in the list
+      $("#individualProps").on('click', '.prop',  function() {
+        //log the object information for clicked property
+        var propertyData = JSON.parse($(this).attr("json-data"));
+        console.log(propertyData);
+        //we now need to populate this data into the fullDetails element
+      });
     newPlaces();
   })
