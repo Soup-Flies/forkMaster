@@ -73,7 +73,9 @@ function testUserInput() {
       type : data.value,
       venueType : "restaurant"
     }
+    //Make query to zillow.com with city and state from search
     zillowWebScrape();
+    //call zillow api with zpid scraped from page
     zillowApi(apiLinkBuild("zillowRegion"));
   };
 
@@ -117,6 +119,7 @@ function xmlToJson(xml) {
 	return obj;
 };
 
+//function to build the url based on user input data
 function apiLinkBuild(apiType) {
   //build url for api depending on user input
   if (apiType == "zillowRegion") {
@@ -124,26 +127,17 @@ function apiLinkBuild(apiType) {
     return tempUrl;
   } else if (apiType == "googlePlaces") {
     var tempUrl;
-  } else if (apiType == "zillowGetComps") {
-    zillowWebScrape();
   }
 };
 
-
-
+//pulls the html from zillows page and interprets the scripts returned due to $.load() .
+//The scripts need to be interpretted so that zpid's get put into the html
 function zillowWebScrape() {
   var tempArray = [];
   var tempUrl;
   $(".footer").load(`${corsWorkaround}http://www.zillow.com/homes/${searchInput.city}-${searchInput.state} .zsg-photo-card-overlay-link`, function(data) {
-    var myRe = /(?:data-zpid=")(\d*)/g;
-    var myArray = data.match(myRe);
-    $.each(myArray, function(index, value) {
-      tempArray.push(value.slice(11, (value.length -1)))
-    })
-    searchInput.id = tempArray[1];
-    tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
-    console.log(tempUrl);
-    zillowResidential(tempUrl);
+    // console.log("Returned scrape DATA", data);
+    zillowResidential(data);
   });
 }
 
@@ -161,12 +155,15 @@ function zillowApi(url) {
     }
   })
     .done(function(data) {
+      //convert zillow returned xml into json format
       dataJSON = xmlToJson(data);
       console.log(dataJSON);
+      //shortcut to maneuver the object more easily
       var temp = dataJSON["RegionChildren:regionchildren"].response.region;
       searchInput.lat = parseFloat(temp.latitude["#text"]);
       searchInput.long = parseFloat(temp.longitude["#text"]);
       console.log(searchInput);
+      //update map with new lat and longitude from searchInput object
       initMap()
     })
     .fail(function(data) {
@@ -174,43 +171,105 @@ function zillowApi(url) {
     })
 };
 
-function zillowResidential(url) {
-  console.log(url);
-  var url = `${corsWorkaround}${url}`;
-  var apiUrl = url;
-  $.ajax({
-    method: "GET",
-    url: apiUrl,
-    headers: {
-      "Accept": "application/json"
-    }
+//interpret returned data from zillowWebScrape to grab zpids - uses regex to parse the returned string
+// then runs a recursive function (a function that calls itself until expected result in this case)
+function zillowResidential(zpidData) {
+  var tempArray = [];
+  //this is the "Regex" a method in coding to search through strings in coding
+  var myRe = /(?: data-zpid=")(\d+)" /g;
+  //put results into an array
+  var myArray = zpidData.match(myRe);
+  //run a loop on returned array to remove excess information from the regex return
+  $.each(myArray, function(index, value) {
+    //slices excess information
+    tempArray.push(value.slice(12, (value.length -2)))
   })
-  .done(function(data) {
-    dataJSON = xmlToJson(data);
-    console.log("Residential Properties Data", dataJSON);
-  })
+
+//recursive function mentioned above
+//this will call itself until the errorTest statement comes back with a "0" error code
+  var fetchData = function(tempArray) {
+    console.log("RETURNED ARRAY", tempArray);
+    //choose first index from tempArray
+    searchInput.id = tempArray[0];
+    tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
+    console.log(tempUrl);
+    //different notation to concatenate strings (ES6 implementation)
+    var apiUrl = `${corsWorkaround}${tempUrl}`;
+    //standard ajax call
+    $.ajax({
+      method: "GET",
+      url: apiUrl,
+      headers: {
+        "Accept": "application/json"
+      }
+    })
+    .done(function(data) {
+      data = xmlToJson(data);
+      console.log(data);
+      //Test for a "0" message code being returned from above ajax call - this means no errors
+      var errorTest = data["Comps:comps"].message.code["#text"];
+      //if the errorcode is anything but "0" we need to run this function again
+      if (errorTest != "0") {
+        console.log("ERROR DETECTED: ", errorTest);
+        //slice the first entry off of the array
+        var slicedArray = tempArray.slice(1);
+        console.log(slicedArray);
+        //and pass it back into the "fetchData" function - this is the recursive part
+        fetchData(slicedArray);
+      } else {
+        //if we did not have an error, proceed in appending returned data to our page
+        appendResidential(data)
+      }
+
+    })
+    .fail(function(data) {
+      //failure on making the actual call - this is a failure in communication with the server in this case
+      console.log("ERROR: ", data);
+    })
+  }
+  //initial call of the fetchData function. All other calls are inside of the scope of the function
+  fetchData(tempArray);
 }
 
-function appendResidential(properties) {
-  var $div = $("<div>");
+//build and display the returned properties from fetchData
+function appendResidential(filteredProperties) {
+  console.log(filteredProperties);
+  //make a shortcut inside the filteredProperties object to save on typing out the full path
+  var property = filteredProperties["Comps:comps"].response.properties.comparables.comp;
+  console.log(property);
+  //empty previous results to populate with new results
+  $("#individualProps").empty();
+  //loop over the properties returned from Comp data to populate into individualProps element
+  $.each(property, function(index, value) {
+    var $div = $("<div class='propTest border'>");
+    var $p = $("<p>");
+    $p.html(value.address.street["#text"]);
+    $div.append($p);
+    $("#individualProps").append($div);
+  })
+
 }
 
 //Callback function from HTML to start the google map
 function initMap() {
-  console.log("I'm Google", google);
-  // console.log(currentSearch);
   if (initialLoad) {
+    //sets a default location for map to run on the first load of the page
     var geoLocation = {lat: 39.764339, lng: -104.85511};
   } else {
+    //if the user has searched, we will set the lat and long to the users search
     var geoLocation = {lat: searchInput.lat, lng: searchInput.long};
   }
+  //googles method of updating the map to selected geoLocation
     map = new google.maps.Map(document.getElementById('map'), {
       center: geoLocation,
       zoom: 13
     });
+    //if this is the first time initMap is run since the page has loaded
     if (initialLoad) {
+      //update the boolean to false so that next time initMap is run, geoLocation will be set to users search parameters
       initialLoad = false;
     } else {
+      //if the user has searched then update the google places information
       newPlaces();
     }
 
@@ -225,15 +284,14 @@ function initMap() {
     }
 
     currentMap = `${corsWorkaround}${currentMap}`;
-    console.log(currentMap);
+    // console.log(currentMap);
     $.ajax({
       url: currentMap,
        type: 'GET',
        crossDomain: true,
        success: function(response) {
-         console.log(response);
          var data = response.results;
-         console.log(' WHAT IS OUR RESPONSE DATA', response.results);
+         console.log('Google Places return data', response.results);
          updateMap(data);
        },
     })
@@ -299,16 +357,20 @@ function updateMap(data) {
     //click handling for search button
     $(".submitButtons").click("on", function(event) {
       event.preventDefault();
-      //userinputvalidation
+      //userinputvalidation();
       updateCurrentSearch(this);
 
     });
     //enter key handling for search button
     $("#keys").on("keyup", function(event) {
-      event.preventDefault();
-      console.log(this);
-      // updateCurrentSearch(this);
-      console.log(event.keyCode);
+      if (event.keyCode == 13) {
+        event.preventDefault();
+        //userinputvalidation();
+        updateCurrentSearch(this);
+      } else {
+        //enter key not pressed
+      }
+
     });
     newPlaces();
   })
