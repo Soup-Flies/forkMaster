@@ -203,7 +203,6 @@ function zillowResidential(zpidData) {
     })
     .done(function(data) {
       data = xmlToJson(data);
-      console.log(data);
       //Test for a "0" message code being returned from above ajax call - this means no errors
       var errorTest = data["Comps:comps"].message.code["#text"];
       //if the errorcode is anything but "0" we need to run this function again
@@ -212,7 +211,6 @@ function zillowResidential(zpidData) {
         //slice the first entry off of the array
         //which is the bad result
         var slicedArray = tempArray.slice(1);
-        console.log(slicedArray);
         //and pass it back into the "fetchData" function - this is the recursive part where a function calls itself from inside itself.
         fetchData(slicedArray);
       } else {
@@ -335,10 +333,6 @@ function updateMap(data) {
     // infowindow.close();
     // });
   });
-    var contentString = "quotes";
-    var infowindow = new google.maps.InfoWindow({
-      content: contentString
-    });
   }
 
   function placesData() {
