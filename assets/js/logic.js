@@ -12,6 +12,7 @@ var currentSearch = {
 
 var zillowRegionChildren = "http://www.zillow.com/webservice/GetRegionChildren.htm?";
 var zillowEstimate = "http://www.zillow.com/webservice/GetSearchResults.htm";
+var zillowGetComps = "http://www.zillow.com/webservice/GetDeepComps.htm?";
 var zillowKey = "X1-ZWz195aafxhlor_4vl2o";
 var googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
 var googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
@@ -21,7 +22,7 @@ var searchRadius = (1609.344 * 3).toString();
 var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
 var searchInput = {};
 var corsWorkaround = "https://cors-anywhere.herokuapp.com/";
-
+var map;
 
 function testUserInput() {
   //test what kind and if the user input was valid, then build object for search
@@ -32,15 +33,16 @@ function testUserInput() {
       {"state" : ""}]
   };
 
+  if ($("#inputState") == true) {
+    this.val().function(initMap(addyDeets));
+  } else {
+    window.alert("Please enter a city!");
+  };
+
   if ($("#inputZip").val().length() == 5) {
     this.val().function(initMap(addyDeets));
   } else {
     $("#inputZip").html("Please enter a 5 digit zip code");
-        if ($("#inputState") == true) {
-          this.val().function(initMap(addyDeets));
-        } else {
-          $("#inputCity").val().function(initMap(addyDeets));
-        }
   };
 
   if ($("#inputCity") == true) {
@@ -64,17 +66,18 @@ function testUserInput() {
   function updateCurrentSearch(data) {
     searchInput = {};
     searchInput = {
-      id : "",
+      id : null,
       zip : $("#inputZip").val(),
       state : $("#inputState").val(),
       city : $("#inputCity").val(),
       type : data.value,
       venueType : "restaurant"
     }
-    console.log(searchInput);
-    zillowApi(apiLinkBuild("zillowRegion", searchInput));
+    //Make query to zillow.com with city and state from search
+    zillowWebScrape();
+    //call zillow api with zpid scraped from page
+    zillowApi(apiLinkBuild("zillowRegion"));
   };
-
 
 // Changes XML to JSON -- Needed for all Zillow Searches
 function xmlToJson(xml) {
@@ -115,8 +118,8 @@ function xmlToJson(xml) {
 	return obj;
 };
 
+//function to build the url based on user input data
 function apiLinkBuild(apiType) {
-  //update to switch for clarity?
   //build url for api depending on user input
   if (apiType == "zillowRegion") {
     var tempUrl = `${zillowRegionChildren}zws-id=${zillowKey}&state=${searchInput.state}&city=${searchInput.city}&childtype=neighborhood`;
@@ -124,13 +127,23 @@ function apiLinkBuild(apiType) {
   } else if (apiType == "googlePlaces") {
     var tempUrl;
   }
+};
 
+//pulls the html from zillows page and interprets the scripts returned due to $.load() .
+//The scripts need to be interpretted so that zpid's get put into the html
+function zillowWebScrape() {
+  var tempArray = [];
+  var tempUrl;
+  $(".footer").load(`${corsWorkaround}http://www.zillow.com/homes/${searchInput.city}-${searchInput.state} .zsg-photo-card-overlay-link`, function(data) {
+    // console.log("Returned scrape DATA", data);
+    zillowResidential(data);
+  });
 }
 
 //Call api for zillow
 function zillowApi(url) {
+  console.log(url);
   var url = `${corsWorkaround}${url}`;
-
   var apiUrl = url;
   $.ajax({
     method: "GET",
@@ -140,13 +153,15 @@ function zillowApi(url) {
     }
   })
     .done(function(data) {
+      //convert zillow returned xml into json format
       dataJSON = xmlToJson(data);
       console.log(dataJSON);
+      //shortcut to maneuver the object more easily
       var temp = dataJSON["RegionChildren:regionchildren"].response.region;
-      searchInput.id = temp.id["#text"];
       searchInput.lat = parseFloat(temp.latitude["#text"]);
       searchInput.long = parseFloat(temp.longitude["#text"]);
       console.log(searchInput);
+      //update map with new lat and longitude from searchInput object
       initMap()
     })
     .fail(function(data) {
@@ -154,54 +169,135 @@ function zillowApi(url) {
     })
 };
 
+//interpret returned data from zillowWebScrape to grab zpids - uses regex to parse the returned string
+// then runs a recursive function (a function that calls itself until expected result in this case)
+function zillowResidential(zpidData) {
+  var tempArray = [];
+  //this is the "Regex" a method in programming to search through strings
+  var myRe = /(?: data-zpid=")(\d+)" /g;
+  //put results into an array
+  var myArray = zpidData.match(myRe);
+  //run a loop on returned array to remove excess information from the regex return
+  $.each(myArray, function(index, value) {
+    //slices excess information
+    tempArray.push(value.slice(12, (value.length -2)))
+  })
+
+//recursive function mentioned above
+//this will call itself until the errorTest statement comes back with a "0" error code
+  var fetchData = function(tempArray) {
+    console.log("RETURNED ARRAY", tempArray);
+    //choose first index from tempArray
+    searchInput.id = tempArray[0];
+    tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
+    console.log(tempUrl);
+    //different notation to concatenate strings (ES6 implementation)
+    var apiUrl = `${corsWorkaround}${tempUrl}`;
+    //standard ajax call
+    $.ajax({
+      method: "GET",
+      url: apiUrl,
+      headers: {
+        "Accept": "application/json"
+      }
+    })
+    .done(function(data) {
+      data = xmlToJson(data);
+      //Test for a "0" message code being returned from above ajax call - this means no errors
+      var errorTest = data["Comps:comps"].message.code["#text"];
+      //if the errorcode is anything but "0" we need to run this function again
+      if (errorTest != "0") {
+        console.log("ERROR DETECTED: ", errorTest);
+        //slice the first entry off of the array
+        //which is the bad result
+        var slicedArray = tempArray.slice(1);
+        //and pass it back into the "fetchData" function - this is the recursive part where a function calls itself from inside itself.
+        fetchData(slicedArray);
+      } else {
+        //if we did not have an error, proceed in appending returned data to our page
+        appendResidential(data);
+      }
+    })
+    .fail(function(data) {
+      //failure on making the actual call - this is a failure in communication with the server in this case
+      console.log("ERROR: ", data);
+    })
+  }
+  //initial call of the fetchData function. All other calls are inside of the scope of the function
+  fetchData(tempArray);
+}
+
+//build and display the returned properties from fetchData
+function appendResidential(filteredProperties) {
+  console.log(filteredProperties);
+  //make a shortcut inside the filteredProperties object to save on typing out the full path
+  var property = filteredProperties["Comps:comps"].response.properties.comparables.comp;
+  console.log(property);
+  //empty previous results to populate with new results
+  $("#individualProps").empty();
+  //loop over the properties returned from Comp data to populate into individualProps element
+  $.each(property, function(index, value) {
+    var $div = $("<div class='prop border'>");
+    //store object data into the div element for later use to populate specific details
+    $div.attr("json-data", JSON.stringify(value));
+    var $p = $("<p>");
+    $p.html((index + 1 ) +": " + value.address.street["#text"]);
+    $p.append(`<br>${value.address.city["#text"]}, ${value.address.state["#text"]} ${value.address.zipcode["#text"]}`);
+    $div.append($p);
+    $("#individualProps").append($div);
+  })
+
+}
 
 //Callback function from HTML to start the google map
 function initMap() {
-  // console.log(currentSearch);
   if (initialLoad) {
+    //sets a default location for map to run on the first load of the page
     var geoLocation = {lat: 39.764339, lng: -104.85511};
   } else {
+    //if the user has searched, we will set the lat and long to the users search
     var geoLocation = {lat: searchInput.lat, lng: searchInput.long};
   }
+  //googles method of updating the map to selected geoLocation
     map = new google.maps.Map(document.getElementById('map'), {
       center: geoLocation,
       zoom: 13
     });
+    //if this is the first time initMap is run since the page has loaded
     if (initialLoad) {
+      //update the boolean to false so that next time initMap is run, geoLocation will be set to users search parameters
       initialLoad = false;
     } else {
-      newPlaces(geo);
+      //if the user has searched then update the google places information
+      newPlaces();
     }
-
 }
 
 //New api call to google for the map information
   function newPlaces() {
+    var baseUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
     if (searchInput.lat) {
-      currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+      currentMap = `${baseUrl}${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
     } else {
-      currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
+      currentMap = `${baseUrl}${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
     }
-
     currentMap = `${corsWorkaround}${currentMap}`;
-    console.log(currentMap);
+    // console.log(currentMap);
     $.ajax({
       url: currentMap,
        type: 'GET',
        crossDomain: true,
        success: function(response) {
-         console.log(response);
          var data = response.results;
-         console.log(' WHAT IS OUR RESPONSE DATA', response.results);
+         console.log('Google Places return data', response.results);
          updateMap(data);
        },
     })
   };
 
-
 //New call to update maps with search parameters passed by user
 function updateMap(data) {
-  console.log(data);
+  // console.log(data);
   $.each(data, function(index, value) {
     var temp = data[index].geometry.location;
     var loc = {
@@ -230,17 +326,13 @@ function updateMap(data) {
     var infowindow = new google.maps.InfoWindow({
       content: contentString
     });
-    marker.addListener('mouseover', function() {
-    infowindow.open(map, marker);
-    });
-    marker.addListener('mouseout', function() {
-    infowindow.close();
-    });
+    // marker.addListener('mouseover', function() {
+    // infowindow.open(map, marker);
+    // });
+    // marker.addListener('mouseout', function() {
+    // infowindow.close();
+    // });
   });
-    var contentString = "quotes";
-    var infowindow = new google.maps.InfoWindow({
-      content: contentString
-    });
   }
 
   function placesData() {
@@ -254,24 +346,29 @@ function updateMap(data) {
   }
 
   $(document).ready(function() {
-    var map;
-
     //click handling for search button
     $(".submitButtons").click("on", function(event) {
       event.preventDefault();
-      //userinputvalidation
+      //userinputvalidation();
       updateCurrentSearch(this);
-      // newPlaces();
 
-
-      // zillowApi($("#userSelection").val())
     });
-    //enter key handling for search button
+    //enter key handling for search button -- still needs element to hook onto
     $("#keys").on("keyup", function(event) {
-      event.preventDefault();
-      console.log(this);
-      // updateCurrentSearch(this);
-      console.log(event.keyCode);
-    });
+      if (event.keyCode == 13) {
+        event.preventDefault();
+        //userinputvalidation();
+        updateCurrentSearch(this);
+      } else {
+        //enter key not pressed
+      }
+      });
+      //use delegated click to link onto each property in the list
+      $("#individualProps").on('click', '.prop',  function() {
+        //log the object information for clicked property
+        var propertyData = JSON.parse($(this).attr("json-data"));
+        console.log(propertyData);
+        //we now need to populate this data into the fullDetails element
+      });
     newPlaces();
   })
