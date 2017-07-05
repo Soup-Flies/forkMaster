@@ -11,19 +11,16 @@ h1 {
   min-height: 40px;
 }
 
-.propTest {
-  height: 100px;
-}
-
 .mapSection {
   margin-top: 5px;
   margin-bottom: 5px;
   border: solid 2px black;
 }
 
-.propTest {
+.prop {
   margin-top: 3px;
   margin-bottom: 3px;
+  height: 100px;
 }
 
 #individualProps {
