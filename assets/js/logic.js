@@ -23,8 +23,6 @@ var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?l
 var searchInput = {};
 var corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 
-<<<<<<< HEAD
-=======
 
 function testUserInput() {
   //test what kind and if the user input was valid, then build object for search
@@ -64,7 +62,6 @@ function testUserInput() {
   };
 };
 
->>>>>>> 210b1a86dead817ef39e1751709391a18d2ebe76
 //take in user input for the searches to happen
   function updateCurrentSearch(data) {
     searchInput = {};
@@ -190,6 +187,11 @@ function zillowApi(url) {
     .fail(function(data) {
       console.log("ERROR: ", data);
     })
+
+    var test = dataJSON["Comps:comps"].response.properties.principal
+    test.bathrooms
+    test.bedrooms
+    test.finishedSqFt
 };
 
 function zillowResidential(url) {
