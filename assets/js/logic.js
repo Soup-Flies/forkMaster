@@ -10,8 +10,9 @@ var currentSearch = {
   city : "Denver"
 }
 
-var zillowRegionChildren = "http://www.zillow.com/webservice/GetRegionChildren.htm?";
-var zillowEstimate = "http://www.zillow.com/webservice/GetSearchResults.htm";
+
+var zillowZestimate = "http://www.zillow.com/webservice/GetZestimate.htm?";
+var zillowSearch = "http://www.zillow.com/webservice/GetSearchResults.htm";
 var zillowGetComps = "http://www.zillow.com/webservice/GetDeepComps.htm?";
 var zillowKey = "X1-ZWz195aafxhlor_4vl2o";
 var googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
@@ -71,7 +72,8 @@ function testUserInput() {
       state : $("#inputState").val(),
       city : $("#inputCity").val(),
       type : data.value,
-      venueType : "restaurant"
+      venueType : "restaurant",
+      price : "0-0_price"
     }
     //Make query to zillow.com with city and state from search
     zillowWebScrape();
@@ -122,7 +124,7 @@ function xmlToJson(xml) {
 function apiLinkBuild(apiType) {
   //build url for api depending on user input
   if (apiType == "zillowRegion") {
-    var tempUrl = `${zillowRegionChildren}zws-id=${zillowKey}&state=${searchInput.state}&city=${searchInput.city}&childtype=neighborhood`;
+    var tempUrl = `${zillowSearch}zws-id=${zillowKey}&state=${searchInput.state}&city=${searchInput.city}&childtype=neighborhood`;
     return tempUrl;
   } else if (apiType == "googlePlaces") {
     var tempUrl;
@@ -132,10 +134,17 @@ function apiLinkBuild(apiType) {
 //pulls the html from zillows page and interprets the scripts returned due to $.load() .
 //The scripts need to be interpretted so that zpid's get put into the html
 function zillowWebScrape() {
+  let rent;
+  if (searchInput.type == "rent") {
+    rent = 'for_rent/';
+  } else {
+    rent = '';
+  };
+  let listType = "fsba,fsbo,fore_lt";
   var tempArray = [];
-  var tempUrl;
-  $(".footer").load(`${corsWorkaround}http://www.zillow.com/homes/${searchInput.city}-${searchInput.state} .zsg-photo-card-overlay-link`, function(data) {
-    // console.log("Returned scrape DATA", data);
+  var tempUrl = `${corsWorkaround}http://www.zillow.com/homes/${rent}${searchInput.city}-${searchInput.state}/${listType}/${searchInput.price}/house,condo,townhouse_type .zsg-photo-card-overlay-link`;
+  console.log(tempUrl);
+  $(".footer").load(tempUrl, function(data) {
     zillowResidential(data);
   });
 }
@@ -162,7 +171,7 @@ function zillowApi(url) {
       searchInput.long = parseFloat(temp.longitude["#text"]);
       console.log(searchInput);
       //update map with new lat and longitude from searchInput object
-      initMap()
+      initMap(searchInput.lat, searchInput.long)
     })
     .fail(function(data) {
       console.log("ERROR: ", data);
@@ -250,18 +259,18 @@ function appendResidential(filteredProperties) {
 }
 
 //Callback function from HTML to start the google map
-function initMap() {
+function initMap(lati, long) {
   if (initialLoad) {
     //sets a default location for map to run on the first load of the page
     var geoLocation = {lat: 39.764339, lng: -104.85511};
   } else {
     //if the user has searched, we will set the lat and long to the users search
-    var geoLocation = {lat: searchInput.lat, lng: searchInput.long};
+    var geoLocation = {lat: lati, lng: long};
   }
   //googles method of updating the map to selected geoLocation
     map = new google.maps.Map(document.getElementById('map'), {
       center: geoLocation,
-      zoom: 13
+      zoom: 15
     });
     //if this is the first time initMap is run since the page has loaded
     if (initialLoad) {
@@ -297,7 +306,7 @@ function initMap() {
 
 //New call to update maps with search parameters passed by user
 function updateMap(data) {
-  // console.log(data);
+  console.log(data);
   $.each(data, function(index, value) {
     var temp = data[index].geometry.location;
     var loc = {
@@ -326,12 +335,6 @@ function updateMap(data) {
     var infowindow = new google.maps.InfoWindow({
       content: contentString
     });
-    // marker.addListener('mouseover', function() {
-    // infowindow.open(map, marker);
-    // });
-    // marker.addListener('mouseout', function() {
-    // infowindow.close();
-    // });
   });
   }
 
@@ -349,26 +352,29 @@ function updateMap(data) {
     //click handling for search button
     $(".submitButtons").click("on", function(event) {
       event.preventDefault();
+
       //userinputvalidation();
       updateCurrentSearch(this);
 
     });
-    //enter key handling for search button -- still needs element to hook onto
-    $("#keys").on("keyup", function(event) {
-      if (event.keyCode == 13) {
-        event.preventDefault();
-        //userinputvalidation();
-        updateCurrentSearch(this);
-      } else {
-        //enter key not pressed
-      }
-      });
       //use delegated click to link onto each property in the list
       $("#individualProps").on('click', '.prop',  function() {
         //log the object information for clicked property
         var propertyData = JSON.parse($(this).attr("json-data"));
         console.log(propertyData);
+        var lat = propertyData.address.latitude["#text"];
+        var long = propertyData.address.longitude["#text"];
+
+        initMap(parseFloat(lat), parseFloat(long));
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(lat, long),
+	        icon: 'http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png',
+          size: new google.maps.Size(10,10),
+          map: map
+    });
+        searchInput.lat = parseFloat(lat);
+        searchInput.long = parseFloat(long);
         //we now need to populate this data into the fullDetails element
+        newPlaces();
       });
-    newPlaces();
   })
