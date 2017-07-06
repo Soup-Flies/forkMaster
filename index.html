@@ -30,19 +30,29 @@
             <button class="col-xs-4 btn btn-default submitChild" type="button">Rent</button>
             <button class="col-xs-4 btn btn-default submitChild" type="button">Buy</button>
             <button class="col-xs-4 btn btn-default submitChild" type="button">Invest</button>
-        </div>
+            <button class="col-xs-4 btn btn-default" value="rent" type="button">Rent</button>
+            <button class="col-xs-4 btn btn-default" type="button">Buy</button>
+            <button class="col-xs-4 btn btn-default" type="button">Invest</button>
+          </div>
+          </div>
       </div>
     </form>
   </div>
-  <div class="row">
-    <div class="border amenitiesBar col-xs-12">
-      <div class="amenitiesHeading"></div>
-      <div class="amenitiesCont">
-        <form action="#">Amenities bar <br>
-        Expandable and Collapsable</form>
+  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="amenitiesBar">
+        <h4 class="panel-title">
+          <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            collapsable amenities bar
+          </a>
+        </h4>
+      </div>
+      <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+        <div class="panel-body">
+          append data here
+        </div>
       </div>
     </div>
-  </div>
 </div>
 
 <div class="container mapSection">
@@ -125,7 +135,7 @@
     Footer!
   </div>
 
-
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <script src="./assets/js/logic.js"></script>
   <script src="./assets/js/handling.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I&libraries=places&callback=initMap" async defer></script>
