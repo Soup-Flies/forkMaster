@@ -1,3 +1,4 @@
+
 //this is just for static testing
 var currentSearch = {
   id : "",
@@ -76,29 +77,14 @@ function amenitiesBar() {
     console.log(data);
     searchInput = {};
     searchInput = {
-<<<<<<< HEAD
-<<<<<<< HEAD
-      id : "",
-      zip : data.zip,
-      state : data.state,
-      city : data.city,
-      type : data.type,
-=======
-=======
       address: null,
->>>>>>> 813f2ecc5f505462c97512c97166f0245d3dd08e
       id : null,
       zip : $("#inputZip").val(),
       state : $("#inputState").val(),
       city : $("#inputCity").val(),
       type : data.value,
-<<<<<<< HEAD
->>>>>>> 1ef87fc84eae7b5adefa86884c8f1815f7023255
-      venueType : "restaurant"
-=======
-      venueType : "",
+      venueType : "cafe",
       price : null
->>>>>>> 813f2ecc5f505462c97512c97166f0245d3dd08e
     }
     //venueType is changeable to view other types of ammenities.
 
@@ -198,30 +184,15 @@ function zillowApi(url) {
       console.log(data);
       //convert zillow returned xml into json format
       dataJSON = xmlToJson(data);
-<<<<<<< HEAD
-      console.log("Zillow Api Return information", dataJSON);
-=======
       console.log(dataJSON);
       //shortcut to maneuver the object more easily
-<<<<<<< HEAD
->>>>>>> 1ef87fc84eae7b5adefa86884c8f1815f7023255
-      var temp = dataJSON["RegionChildren:regionchildren"].response.region;
-      searchInput.lat = parseFloat(temp.latitude["#text"]);
-      searchInput.long = parseFloat(temp.longitude["#text"]);
-=======
       var temp = dataJSON["SearchResults:searchresults"].response.region;
->>>>>>> 813f2ecc5f505462c97512c97166f0245d3dd08e
       console.log(searchInput);
       //we now need to populate this data into the fullDetails element
     })
     .fail(function(data) {
       console.log("ERROR: ", data);
     })
-
-    var test = dataJSON["Comps:comps"].response.properties.principal
-    test.bathrooms
-    test.bedrooms
-    test.finishedSqFt
 };
 
 function addressResidential(zpidData) {
@@ -396,25 +367,15 @@ function initMap(lati, long) {
       currentMap = `${baseUrl}${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
     }
     currentMap = `${corsWorkaround}${currentMap}`;
-<<<<<<< HEAD
-=======
     // console.log(currentMap);
->>>>>>> 1ef87fc84eae7b5adefa86884c8f1815f7023255
     $.ajax({
       url: currentMap,
        type: 'GET',
        crossDomain: true,
        success: function(response) {
          var data = response.results;
-<<<<<<< HEAD
-         console.log('Google Places Response Information', response.results);
-=======
          console.log('Google Places return data', response.results);
-<<<<<<< HEAD
->>>>>>> 1ef87fc84eae7b5adefa86884c8f1815f7023255
-=======
         //  getGPhoto(data, 0);
->>>>>>> 813f2ecc5f505462c97512c97166f0245d3dd08e
          updateMap(data);
        },
     })
@@ -426,7 +387,7 @@ function initMap(lati, long) {
 
     var photoHttp= "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+data[idx].photos[0].photo_reference+"&key="+googlePlacesKey;
     console.log(photoHttp);
-    photoHttp = `${corsWorkaround}${photoHttp}`;
+
     // $.ajax({
     //   url: photoHttp,
     //   type: 'GET',
@@ -511,56 +472,13 @@ function updateMap(data) {
     });
   }
 
-  $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
-
   $(document).ready(function() {
     //click handling for search button
-<<<<<<< HEAD
-<<<<<<< HEAD
-    $(".submitChild").click("on", function(event) {
-      console.log('button was clicked', $(this));
-      console.log('the button type is', $(this).text());
-
-      var submitData = {
-        city: $('#inputCity').val(),
-        state: $('#inputState').val(),
-        zip: $('#inputZip').val(),
-        type: $(this).text()
-      }
-
-      if (submitData.state) {
-        //  The user has input their state
-        updateCurrentSearch(submitData);
-      } else {
-        //  The user has not added a state, and they need to
-        $('.tooltipHolder').tooltip("show");
-        $('#inputState').css({"border":"1px solid red"});
-        console.log('add your state');
-      }
-
-      // var stateInput = $('#inputState').val();
-      // console.log('state input', stateInput);
-      // if (!stateInput) {
-      //   console.log('You need to input a state');
-      // }
-
-
-      // event.preventDefault();
-      //userinputvalidation
-      //updateCurrentSearch(submitData);
-      // newPlaces();
-=======
-    $(".submitButtons").click("on", function(event) {
-=======
     $(".submitButtons").on("click", '.btn', function(event) {
->>>>>>> 813f2ecc5f505462c97512c97166f0245d3dd08e
       event.preventDefault();
 
       //userinputvalidation();
       updateCurrentSearch(this);
->>>>>>> 1ef87fc84eae7b5adefa86884c8f1815f7023255
 
     });
       //use delegated click to link onto each property in the list
@@ -586,9 +504,4 @@ function updateMap(data) {
         //call zillow api with zpid scraped from page
         zillowApi(apiLinkBuild("zillowSearch"));
       });
-<<<<<<< HEAD
-    newPlaces();
-
-=======
->>>>>>> 813f2ecc5f505462c97512c97166f0245d3dd08e
   })
