@@ -19,7 +19,7 @@ const googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
 const googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
 const corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
-//search radius of 3 miles, 1609.344 is meters per mile
+//search radius of 1 mile, 1609.344 is meters per mile
 var searchRadius = (1609.344 * 1).toString(); //possibly variable dependent on user input
 var initialLoad = true;
 var searchInput = {};
@@ -83,7 +83,7 @@ function amenitiesBar() {
       state : $("#inputState").val(),
       city : $("#inputCity").val(),
       type : data.value,
-      venueType : "cafe",
+      venueType : "",
       price : null
     }
     //venueType is changeable to view other types of ammenities.
@@ -420,6 +420,10 @@ function updateMap(data) {
     case "cafe":
       iconType = './assets/images/cafe.png';
       break;
+
+
+    default:
+      iconType = null;
 
   }
 /*   cafe - church - gym - hospital
