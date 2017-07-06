@@ -11,18 +11,18 @@ var currentSearch = {
 }
 
 
-var zillowZestimate = "http://www.zillow.com/webservice/GetZestimate.htm?";
-var zillowSearch = "http://www.zillow.com/webservice/GetSearchResults.htm?";
-var zillowGetComps = "http://www.zillow.com/webservice/GetDeepComps.htm?";
-var zillowKey = "X1-ZWz195aafxhlor_4vl2o";
-var googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
-var googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
-var initialLoad = true;
-//search radius of 3 miles, 1609.344 is meters per mile
-var searchRadius = (1609.344 * 3).toString();
+const zillowZestimate = "http://www.zillow.com/webservice/GetZestimate.htm?";
+const zillowSearch = "http://www.zillow.com/webservice/GetSearchResults.htm?";
+const zillowGetComps = "http://www.zillow.com/webservice/GetDeepComps.htm?";
+const zillowKey = "X1-ZWz195aafxhlor_4vl2o";
+const googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
+const googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
+const corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
+//search radius of 3 miles, 1609.344 is meters per mile
+var searchRadius = (1609.344 * 1).toString(); //possibly variable dependent on user input
+var initialLoad = true;
 var searchInput = {};
-var corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 var map;
 
 function testUserInput() {
@@ -63,8 +63,18 @@ function testUserInput() {
   };
 };
 
+
+function amenitiesBar() {
+  /*types of amenities google accepts that are useful for us -- best to limit to maybe 3
+  bar - cafe - church - gym - hospital
+  library - night_club - park - restaurant - school
+  we can make these checkboxes on the amenities bar that will call a special function to add or remove
+  certain amenities based on checked boxes then a submit button
+  */
+}
 //take in user input for the searches to happen
   function updateCurrentSearch(data) {
+    console.log(data);
     searchInput = {};
     searchInput = {
       address: null,
@@ -74,8 +84,10 @@ function testUserInput() {
       city : $("#inputCity").val(),
       type : data.value,
       venueType : "restaurant",
-      price : "0-0_price"
+      price : null
     }
+
+    console.log(searchInput);
     //Make query to zillow.com with city and state from search
     zillowWebScrape();
   };
@@ -123,8 +135,7 @@ function xmlToJson(xml) {
 function apiLinkBuild(apiType) {
   //build url for api depending on user input
   if (apiType == "zillowSearch") {
-    var tempUrl = `${zillowSearch}zws-id=${zillowKey}&citystatezip=${searchInput.zip}&address=${searchInput.address}`;
-    console.log(tempUrl);
+    var tempUrl = `${zillowSearch}zws-id=${zillowKey}&citystatezip=${searchInput.zip}&address=${searchInput.address}&rentzestimate=true`;
     return tempUrl;
   } else if (apiType == "googlePlaces") {
     var tempUrl;
@@ -135,16 +146,20 @@ function apiLinkBuild(apiType) {
 //The scripts need to be interpretted so that zpid's get put into the html
 function zillowWebScrape() {
   let rent;
+  console.log(searchInput.type);
   if (searchInput.type == "rent") {
     rent = 'for_rent/';
+    searchInput.price = '0-5000_price';
   } else {
     rent = '';
+    searchInput.price = "0-10000000_price";
   };
   let listType = "fsba,fsbo,fore,new_lt";
   var tempArray = [];
   // strict search few returns
   // var tempUrl = `${corsWorkaround}http://www.zillow.com/homes/${rent}${searchInput.city}-${searchInput.state}/${listType}/${searchInput.price}/house,condo,apartment_duplex,townhouse_type .zsg-photo-card-overlay-link`;
-  var tempUrl = `${corsWorkaround}http://www.zillow.com/homes/${searchInput.city}-${searchInput.state}/ .zsg-photo-card-overlay-link`;
+  console.log(searchInput.type);
+  var tempUrl = `${corsWorkaround}http://www.zillow.com/homes/${rent}${searchInput.city}-${searchInput.state}/${searchInput.price}/ .zsg-photo-card-overlay-link`;
 
   console.log(tempUrl);
   $(".footer").load(tempUrl, function(data) {
@@ -170,12 +185,9 @@ function zillowApi(url) {
       dataJSON = xmlToJson(data);
       console.log(dataJSON);
       //shortcut to maneuver the object more easily
-      var temp = dataJSON["RegionChildren:regionchildren"].response.region;
-      searchInput.lat = parseFloat(temp.latitude["#text"]);
-      searchInput.long = parseFloat(temp.longitude["#text"]);
+      var temp = dataJSON["SearchResults:searchresults"].response.region;
       console.log(searchInput);
-      //update map with new lat and longitude from searchInput object
-      initMap(searchInput.lat, searchInput.long)
+      //we now need to populate this data into the fullDetails element
     })
     .fail(function(data) {
       console.log("ERROR: ", data);
@@ -227,7 +239,7 @@ function appendResidential(filteredProperties) {
     $div.attr("data-json", JSON.stringify(value));
     //store object data into the div element for later use to populate specific details
     var $p = $("<p>");
-    $p.html((index + 1 ) + ": " + value.street);
+    $p.html((index + 1 ) + " of " + filteredProperties.length + ": " + value.street);
     $p.append(`<br>${value.city}, ${value.state} ${value.zipcode}`);
     $div.append($p);
     $("#individualProps").append($div);
@@ -362,10 +374,34 @@ function initMap(lati, long) {
        success: function(response) {
          var data = response.results;
          console.log('Google Places return data', response.results);
+        //  getGPhoto(data, 0);
          updateMap(data);
        },
     })
   };
+
+  //Make Ajax call on Google photo's for info window
+  function getGPhoto(data, idx) {
+    console.log(data);
+
+    var photoHttp= "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+data[idx].photos[0].photo_reference+"&key="+googlePlacesKey;
+    console.log(photoHttp);
+    photoHttp = `${corsWorkaround}${photoHttp}`;
+    // $.ajax({
+    //   url: photoHttp,
+    //   type: 'GET',
+    //   crossDomain: true,
+    //     success: function(response) {
+    //       // console.log(response);
+    //       // var photoData = response.results;
+    //       console.log(' WHAT IS OUR RESPONSE DATA FOR PHOTO', response.results);
+    //       idx++
+    //       // getGPhoto(data, idx);
+    //       // updateMap(data[idx],photoData);
+    //      },
+    //     //  TODO: add failure code
+    //   })
+  }
 
 //New call to update maps with search parameters passed by user
 function updateMap(data) {
@@ -389,7 +425,7 @@ function updateMap(data) {
       position: loc,
       map: map,
       customInfo: markerData,
-      zIndex: 1
+      zIndex: 0
     });
     marker.addListener('click', function() {
     infowindow.open(map, marker);
@@ -414,7 +450,7 @@ function updateMap(data) {
 
   $(document).ready(function() {
     //click handling for search button
-    $(".submitButtons").click("on", function(event) {
+    $(".submitButtons").on("click", '.btn', function(event) {
       event.preventDefault();
 
       //userinputvalidation();
@@ -429,23 +465,19 @@ function updateMap(data) {
 
         searchInput.address = encodeURI(propertyData.street);
         searchInput.zip = encodeURI(propertyData.zipcode);
-        var lat = propertyData.lat;
-        var long = propertyData.long;
+        searchInput.lat = parseFloat(propertyData.lat);
+        searchInput.long = parseFloat(propertyData.long);
 
-        initMap(parseFloat(lat), parseFloat(long));
+        initMap(searchInput.lat, searchInput.long);
         var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(lat, long),
+          position: new google.maps.LatLng(searchInput.lat, searchInput.long),
 	        icon: './assets/images/house.png',
-          size: new google.maps.Size(10,10),
           map: map,
-          zIndex: 0
+          zIndex: 1
     });
-        searchInput.lat = parseFloat(lat);
-        searchInput.long = parseFloat(long);
+
 
         //call zillow api with zpid scraped from page
         zillowApi(apiLinkBuild("zillowSearch"));
-        //we now need to populate this data into the fullDetails element
-        newPlaces();
       });
   })
