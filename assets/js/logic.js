@@ -4,7 +4,7 @@ var currentSearch = {
   lat : 39.764339,
   long : -104.85511,
   zip : "80215",
-  venueType : "restaurant",
+  venueType : "bar",
   state : "Colorado",
   city : "Denver"
 }
@@ -18,7 +18,7 @@ const googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
 const googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
 const corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
-//search radius of 3 miles, 1609.344 is meters per mile
+//search radius of 1 mile, 1609.344 is meters per mile
 var searchRadius = (1609.344 * 1).toString(); //possibly variable dependent on user input
 var initialLoad = true;
 var searchInput = {};
@@ -82,9 +82,10 @@ function amenitiesBar() {
       state : $("#inputState").val(),
       city : $("#inputCity").val(),
       type : data.value,
-      venueType : "restaurant",
+      venueType : "",
       price : null
     }
+    //venueType is changeable to view other types of ammenities.
 
     console.log(searchInput);
     //Make query to zillow.com with city and state from search
@@ -405,6 +406,28 @@ function initMap(lati, long) {
 //New call to update maps with search parameters passed by user
 function updateMap(data) {
   console.log(data);
+
+//determine which icon to use depending on user search variables from amenities bar
+  var iconType;
+  switch  (searchInput.venueType) {
+    case "restaurant":
+      iconType = './assets/images/restaurant.png';
+      break;
+    case "bar":
+      iconType = './assets/images/bar.png';
+      break;
+    case "cafe":
+      iconType = './assets/images/cafe.png';
+      break;
+
+
+    default:
+      iconType = null;
+
+  }
+/*   cafe - church - gym - hospital
+  library - night_club - park - school
+  */
   $.each(data, function(index, value) {
     var temp = data[index].geometry.location;
     var loc = {
@@ -422,6 +445,7 @@ function updateMap(data) {
     }
     var marker = new google.maps.Marker({
       position: loc,
+      icon: iconType,
       map: map,
       customInfo: markerData,
       zIndex: 0
