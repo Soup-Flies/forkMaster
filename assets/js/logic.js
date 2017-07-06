@@ -1,4 +1,3 @@
-
 //this is just for static testing
 var currentSearch = {
   id : "",
