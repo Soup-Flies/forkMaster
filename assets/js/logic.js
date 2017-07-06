@@ -5,7 +5,7 @@ var currentSearch = {
   lat : 39.764339,
   long : -104.85511,
   zip : "80215",
-  venueType : "restaurant",
+  venueType : "bar",
   state : "Colorado",
   city : "Denver"
 }
@@ -83,9 +83,10 @@ function amenitiesBar() {
       state : $("#inputState").val(),
       city : $("#inputCity").val(),
       type : data.value,
-      venueType : "restaurant",
+      venueType : "cafe",
       price : null
     }
+    //venueType is changeable to view other types of ammenities.
 
     console.log(searchInput);
     //Make query to zillow.com with city and state from search
@@ -406,6 +407,24 @@ function initMap(lati, long) {
 //New call to update maps with search parameters passed by user
 function updateMap(data) {
   console.log(data);
+
+//determine which icon to use depending on user search variables from amenities bar
+  var iconType;
+  switch  (searchInput.venueType) {
+    case "restaurant":
+      iconType = './assets/images/restaurant.png';
+      break;
+    case "bar":
+      iconType = './assets/images/bar.png';
+      break;
+    case "cafe":
+      iconType = './assets/images/cafe.png';
+      break;
+
+  }
+/*   cafe - church - gym - hospital
+  library - night_club - park - school
+  */
   $.each(data, function(index, value) {
     var temp = data[index].geometry.location;
     var loc = {
@@ -423,6 +442,7 @@ function updateMap(data) {
     }
     var marker = new google.maps.Marker({
       position: loc,
+      icon: iconType,
       map: map,
       customInfo: markerData,
       zIndex: 0
