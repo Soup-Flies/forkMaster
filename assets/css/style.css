@@ -1,3 +1,7 @@
+body {
+  font-size: 16px;
+}
+
 #map {
     height: 75vh;
 }
@@ -52,4 +56,19 @@ h1 {
   min-height: 500px;
   border-left-style: dashed;
   border-right-style: dashed;
+}
+
+.propImg {
+  margin-top: 0;
+  float: right;
+  height: 100%;
+}
+
+p {
+  float: left;
+}
+
+#zillowLoad {
+  visibility: hidden;
+  display: none;
 }

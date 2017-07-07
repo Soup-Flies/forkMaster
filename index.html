@@ -11,6 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
 </head>
 <body>
 
@@ -20,19 +21,16 @@
   </div>
   <div class="row">
     <form class="col-xs-12 userSearch" action="#">
-      <span class="col-xs-4"><label for="city"></label><input id="inputCity" class="col-xs-12" type="text" placeholder="City"></span>
-      <span class="col-xs-4"><label for="state"></label><input id="inputState" class="col-xs-12" type="text" placeholder="State" required></span>
-      <span class="col-xs-4"><label for="zip"></label><input id="inputZip" class="col-xs-12" type="text" placeholder="Zip"></span>
+      <span><label for="city"></label><input id="inputCity" class="col-xs-6" type="text" placeholder="City"></span>
+      <span><label for="state"></label><input id="inputState" class="col-xs-6" type="text" placeholder="State" required></span>
       <div class="row">
         <div class="submitButtons input-group-btn">
-            <button class="col-xs-4 btn btn-default" value="rent" type="button">Rent</button>
-            <button class="col-xs-4 btn btn-default" type="button">Buy</button>
-            <button class="col-xs-4 btn btn-default" type="button">Invest</button>
-          <!-- </div> -->
+            <button class="col-xs-6 btn btn-default" value="rent" type="button">Rent</button>
+            <button class="col-xs-6 btn btn-default" type="button">Buy</button>
+          </div>
         </div>
       </div>
     </form>
-  </div>
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="amenitiesBar">
@@ -48,71 +46,13 @@
         </div>
       </div>
     </div>
+  </div>
 </div>
 
 <div class="container mapSection">
   <div class="row">
     <div class="col-xs-12 col-md-4" id="individualProps">
-      <div class="border prop">
-        <div>1 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>2 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>3 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>4 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>5 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>6 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>7 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>8 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>9 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>10 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>11 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>12 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>13 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>14 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>15 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>16 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>17 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>18 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>19 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
-      <div class="border prop">
-        <div>20 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, unde perspiciatis! Cumque odit veniam laboriosam neque quasi debitis est at vero repellendus magni, fuga eos maxime veritatis blanditiis nulla quidem.</div>
-      </div>
+      <div class="defaultProp text-center">Please input a search</div>
     </div>
     <div class="col-xs-12 col-md-8" id="map"></div>
   </div>
@@ -121,13 +61,31 @@
 <div class="container">
   <div class="row">
     <div class="border fullDetails col-xs-12">
-      <p>Tighter scope information here</p>
+      <h2>
+        <span data-bind="html: address.street['#text'] + '<br>'"></span>
+        <span data-bind="html: address.city['#text'] + ','"></span>
+        <span data-bind="html: address.state['#text']"></span>
+        <span data-bind="html: address.zipcode['#text'] + '<br>'"></span>
+      </h2>
+      <h4>
+        <span data-bind="html: bedrooms['#text'] + ' bed &middot;'"></span>
+        <span data-bind="html: bathrooms['#text'] + ' bath &middot;'"></span>
+        <span data-bind="html: finishedSqFt['#text'] + ' sqft'"></span>
+      </h4>
+
+
+
+
     </div>
   </div>
 </div>
 
   <div class="border footer">
     Footer!
+  </div>
+
+  <div id="zillowLoad">
+
   </div>
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

@@ -1,3 +1,4 @@
+
 //this is just for static testing
 var currentSearch = {
   id : "",
@@ -11,7 +12,7 @@ var currentSearch = {
 
 
 const zillowZestimate = "http://www.zillow.com/webservice/GetZestimate.htm?";
-const zillowSearch = "http://www.zillow.com/webservice/GetSearchResults.htm?";
+const zillowSearch = "http://www.zillow.com/webservice/GetDeepSearchResults.htm?";
 const zillowGetComps = "http://www.zillow.com/webservice/GetDeepComps.htm?";
 const zillowKey = "X1-ZWz195aafxhlor_4vl2o";
 const googlePlacesKey = "AIzaSyBQCnwzPy31r3t741_zCN9LCy81753WDzw";
@@ -20,6 +21,7 @@ const corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
 //search radius of 1 mile, 1609.344 is meters per mile
 var searchRadius = (1609.344 * 1).toString(); //possibly variable dependent on user input
+var firstSearch = true;
 var initialLoad = true;
 var searchInput = {};
 var map;
@@ -82,7 +84,7 @@ function amenitiesBar() {
       state : $("#inputState").val(),
       city : $("#inputCity").val(),
       type : data.value,
-      venueType : "",
+      venueType : "cafe",
       price : null
     }
     //venueType is changeable to view other types of ammenities.
@@ -159,10 +161,10 @@ function zillowWebScrape() {
   // strict search few returns
   // var tempUrl = `${corsWorkaround}http://www.zillow.com/homes/${rent}${searchInput.city}-${searchInput.state}/${listType}/${searchInput.price}/house,condo,apartment_duplex,townhouse_type .zsg-photo-card-overlay-link`;
   console.log(searchInput.type);
-  var tempUrl = `${corsWorkaround}http://www.zillow.com/homes/${rent}${searchInput.city}-${searchInput.state}/${searchInput.price}/ .zsg-photo-card-overlay-link`;
+  var tempUrl = `${corsWorkaround}http://www.zillow.com/homes/${rent}${searchInput.city}-${searchInput.state}/${searchInput.price}/ .zsg-photo-card-content`;
 
   console.log(tempUrl);
-  $(".footer").load(tempUrl, function(data) {
+  $("#zillowLoad").load(tempUrl, function(data) {
     addressResidential(data);
   });
 };
@@ -185,14 +187,55 @@ function zillowApi(url) {
       dataJSON = xmlToJson(data);
       console.log(dataJSON);
       //shortcut to maneuver the object more easily
-      var temp = dataJSON["SearchResults:searchresults"].response.region;
-      console.log(searchInput);
+      temp = dataJSON["SearchResults:searchresults"].response.results.result;
+
+      // temp = knockoutObservable(temp);
+
       //we now need to populate this data into the fullDetails element
+      fullDetails(temp);
     })
     .fail(function(data) {
       console.log("ERROR: ", data);
     })
 };
+
+//recursive function to manipulate the input object and wrap everything with a KO observable
+function knockoutObservable(obj) {
+  var newObj = obj;
+  console.log(newObj);
+  $.each(obj, function(i, v) {
+    if (typeof(newObj[i]) === 'object') {
+      console.log('another object recursion time!');
+      knockoutObservable(newObj[i]);
+    } else {
+      console.log('base value');
+      newObj[i] = ko.observable( v );
+    }
+  })
+  console.log(newObj);
+};
+
+function fullDetails(property) {
+  console.log(property);
+  // $(".fullDetails").empty();
+  //if statement to check if this is the first search to initialize the ko scripts
+  if (firstSearch) {
+    //initialize Knockout JS for the current Property
+    ko.applyBindings(property);
+    firstSearch = false;
+  }
+
+
+  // var $div = $("<div>");
+  // $div.html(`
+  //   <h2>${property.address.street["#text"]}
+  //   ${property.address.city["#text"]}, ${property.address.state["#text"]} ${property.address.zipcode["#text"]}
+  //   </h2>
+  //   <h3>${property.bedrooms["#text"]} Bed
+  //   `);
+  //   $(".fullDetails").empty();
+  //   $(".fullDetails").append($div);
+}
 
 function addressResidential(zpidData) {
   //very large log, only uncomment when necessary
@@ -201,7 +244,7 @@ function addressResidential(zpidData) {
   //this is the "Regex" a method in programming to search through strings
   //This string of "Regex" will read the returned information from Zillow website and pull out:
   //Full address, city, state, zipcode, bath, bed, square footage, latitude, and longitude
-  var myRe = /(?:streetAddress">)([0-9]+[^<]*)(?:\D*Locality">)([^<]*)(?:\D*Region">)([^<]*)(?:\D*)([0-9]*)(?:\D*)([-0-9.]*)(?:\D*")([-0-9.]*)(?:.+?o">)([^<]*)(?:.+?span>)([^<]*)(?:.+?span>)([^<]*)/g;
+  var myRe = /(?:streetAddress">)([0-9]+[^<]*)(?:\D*Locality">)([^<]*)(?:\D*Region">)([^<]*)(?:\D*)([0-9]*)(?:\D*)([-0-9.]*)(?:\D*")([-0-9.]*)(?:.+?o">)([^<]*)(?:.+?span>)([^<]*)(?:.+?span>)([^<]*)(?:.+?data-src=")(.+?)"/g;
   //put results into an array
   var addresses = [];
 
@@ -219,7 +262,8 @@ function addressResidential(zpidData) {
       long: parseFloat(match[6].trim()),
       bed: match[7].trim(),
       bath: match[8].trim(),
-      sqft: match[9].trim()
+      sqft: match[9].trim(),
+      img: match[10].trim()
     });
     //re-define match for next match set
     match = myRe.exec(zpidData);
@@ -239,99 +283,21 @@ function appendResidential(filteredProperties) {
     $div.attr("data-json", JSON.stringify(value));
     //store object data into the div element for later use to populate specific details
     var $p = $("<p>");
-    $p.html((index + 1 ) + " of " + filteredProperties.length + ": " + value.street);
+    var $img = $("<img class='propImg' alt='Property Image' onerror='appendDefault(this)'>");
+    $img.attr("src", value.img);
+    $p.html((index + 1 ) + " of " + filteredProperties.length + ":<br>");
+    $p.append(value.street);
     $p.append(`<br>${value.city}, ${value.state} ${value.zipcode}`);
+    $p.append("<br><strong>Click for more information</strong>");
     $div.append($p);
+    $div.append($img);
     $("#individualProps").append($div);
   })
 }
 
-//=========================================== DEPRECATED ================================================================================
-/*
-//interpret returned data from zillowWebScrape to grab zpids - uses regex to parse the returned string
-// then runs a recursive function (a function that calls itself until expected result in this case)
-function zillowResidential(zpidData) {
-  console.log(zpidData);
-  var tempArray = [];
-  //this is the "Regex" a method in programming to search through strings
-  var myRe = /(?: data-zpid=")(\d+)" /g;
-  //put results into an array
-  var myArray = zpidData.match(myRe);
-  //run a loop on returned array to remove excess information from the regex return
-  $.each(myArray, function(index, value) {
-    //slices excess information
-    tempArray.push(value.slice(12, (value.length -2)))
-  })
-
-//recursive function mentioned above
-//this will call itself until the errorTest statement comes back with a "0" error code
-  var fetchData = function(tempArray) {
-    console.log("RETURNED ARRAY", tempArray);
-    //choose first index from tempArray
-    searchInput.id = tempArray[0];
-    tempUrl = `${zillowGetComps}zws-id=${zillowKey}&zpid=${searchInput.id}&count=25&rentzestimate=true`;
-    console.log(tempUrl);
-    //different notation to concatenate strings (ES6 implementation)
-    var apiUrl = `${corsWorkaround}${tempUrl}`;
-    //standard ajax call
-    $.ajax({
-      method: "GET",
-      url: apiUrl,
-      headers: {
-        "Accept": "application/json"
-      }
-    })
-    .done(function(data) {
-      data = xmlToJson(data);
-      //Test for a "0" message code being returned from above ajax call - this means no errors
-      var errorTest = data["Comps:comps"].message.code["#text"];
-      //if the errorcode is anything but "0" we need to run this function again
-      if (errorTest != "0") {
-        console.log("ERROR DETECTED: ", errorTest);
-        //slice the first entry off of the array
-        //which is the bad result
-        var slicedArray = tempArray.slice(1);
-        //and pass it back into the "fetchData" function - this is the recursive part where a function calls itself from inside itself.
-        fetchData(slicedArray);
-      } else {
-        //if we did not have an error, proceed in appending returned data to our page
-        appendResidential(data);
-      }
-    })
-    .fail(function(data) {
-      //failure on making the actual call - this is a failure in communication with the server in this case
-      console.log("ERROR: ", data);
-    })
-  }
-  //initial call of the fetchData function. All other calls are inside of the scope of the function
-  fetchData(tempArray);
+function appendDefault(img) {
+  $(img).attr("src", "./assets/images/propDefault.gif");
 }
-
-
-
-//build and display the returned properties from fetchData
-function appendResidential(filteredProperties) {
-  console.log(filteredProperties);
-  //make a shortcut inside the filteredProperties object to save on typing out the full path
-  var property = filteredProperties["Comps:comps"].response.properties.comparables.comp;
-  console.log(property);
-  //empty previous results to populate with new results
-  $("#individualProps").empty();
-  //loop over the properties returned from Comp data to populate into individualProps element
-  $.each(property, function(index, value) {
-    var $div = $("<div class='prop border'>");
-    //store object data into the div element for later use to populate specific details
-    $div.attr("json-data", JSON.stringify(value));
-    var $p = $("<p>");
-    $p.html((index + 1 ) +": " + value.address.street["#text"]);
-    $p.append(`<br>${value.address.city["#text"]}, ${value.address.state["#text"]} ${value.address.zipcode["#text"]}`);
-    $div.append($p);
-    $("#individualProps").append($div);
-  })
-
-}
-*/
-//=========================================== END DEPRECATED ================================================================================
 
 //Callback function from HTML to start the google map
 function initMap(lati, long) {
@@ -386,7 +352,7 @@ function initMap(lati, long) {
 
     var photoHttp= "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+data[idx].photos[0].photo_reference+"&key="+googlePlacesKey;
     console.log(photoHttp);
-    photoHttp = `${corsWorkaround}${photoHttp}`;
+
     // $.ajax({
     //   url: photoHttp,
     //   type: 'GET',
@@ -472,6 +438,8 @@ function updateMap(data) {
   }
 
   $(document).ready(function() {
+
+
     //click handling for search button
     $(".submitButtons").on("click", '.btn', function(event) {
       event.preventDefault();
