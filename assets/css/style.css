@@ -30,7 +30,7 @@ h1 {
 .prop {
   margin: 3px;
   margin-bottom: 3px;
-  height: 100px;
+  height: 130px;
 }
 
 #individualProps {
@@ -39,14 +39,6 @@ h1 {
   overflow-y: scroll;
   padding-top: 5px;
   padding-bottom: 5px;
-}
-
-@media (max-width: 990px) {
-  #individualProps {
-    /*Make this value equal to height of 2 property listings*/
-    max-height: 213px;
-    margin-bottom: 15px;
-  }
 }
 
 .footer {
@@ -77,4 +69,16 @@ p {
 #zillowLoad {
   visibility: hidden;
   display: none;
+}
+
+.addressProp {
+  width: 50%;
+}
+
+@media (max-width: 990px) {
+  #individualProps {
+    /*Make this value equal to height of 2 property listings*/
+    max-height: 150px;
+    margin-bottom: 15px;
+  }
 }
