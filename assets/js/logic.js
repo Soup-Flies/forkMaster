@@ -444,8 +444,9 @@ function updateMap(data) {
     $(".submitButtons").on("click", '.btn', function(event) {
       event.preventDefault();
 
-      //userinputvalidation();
-      updateCurrentSearch(this);
+      formVal(this);
+      formCharCheck(this);
+
 
     });
       //use delegated click to link onto each property in the list
