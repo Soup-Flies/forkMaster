@@ -63,8 +63,23 @@ h1 {
 }
 
 .propImg {
+  font-size: 18px;
+  margin-top: 0;
   float: right;
   height: 100%;
+}
+
+.addressProp {
+  margin-left: 5px;
+  margin-top: 5px;
+  font-size: 12px;
+  position: absolute;
+  width: 150px;
+  overflow-wrap: break-word;
+}
+
+p {
+  float: left;
 }
 
 #zillowLoad {
