@@ -11,7 +11,6 @@
     <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
 </head>
 <body>
 
@@ -21,7 +20,7 @@
   </div>
   <div class="row">
     <form class="col-xs-12 userSearch" action="#">
-      <span><label for="city"></label><input id="inputCity" class="col-xs-6" type="text" placeholder="City"></span>
+      <span><label for="city"></label><input id="inputCity" class="col-xs-6" type="text" placeholder="City" required></span>
       <span><label for="state"></label><input id="inputState" class="col-xs-6" type="text" placeholder="State" required></span>
       <div class="row">
         <div class="submitButtons input-group-btn">
@@ -51,10 +50,10 @@
 
 <div class="container mapSection">
   <div class="row">
-    <div class="col-xs-12 col-md-4" id="individualProps">
+    <div class="col-xs-12 col-lg-4" id="individualProps">
       <div class="defaultProp text-center">Please input a search</div>
     </div>
-    <div class="col-xs-12 col-md-8" id="map"></div>
+    <div class="col-xs-12 col-lg-8" id="map"></div>
   </div>
 </div>
 
@@ -87,6 +86,7 @@
   <div id="zillowLoad">
 
   </div>
+
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <script src="./assets/js/logic.js"></script>

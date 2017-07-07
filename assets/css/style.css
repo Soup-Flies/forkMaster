@@ -28,9 +28,10 @@ h1 {
 }
 
 .prop {
+  padding: 10px;
   margin: 3px;
   margin-bottom: 3px;
-  height: 130px;
+  height: 120px;
 }
 
 #individualProps {
@@ -45,8 +46,12 @@ h1 {
   margin-top: 35px;
 }
 
+#accordion {
+  margin-top: 15px;
+}
+
 .amenitiesBar {
-  margin-top: 5px;
+  margin-top: 15px;
   margin-bottom: 5px;
 }
 
@@ -54,16 +59,12 @@ h1 {
   min-height: 500px;
   border-left-style: dashed;
   border-right-style: dashed;
+  display: none;
 }
 
 .propImg {
-  margin-top: 0;
   float: right;
   height: 100%;
-}
-
-p {
-  float: left;
 }
 
 #zillowLoad {
@@ -72,13 +73,21 @@ p {
 }
 
 .addressProp {
-  width: 50%;
+  float: left;
 }
 
-@media (max-width: 990px) {
+#inputState, #inputCity {
+  margin-bottom: 15px;
+}
+
+@media (max-width: 1200px) {
   #individualProps {
     /*Make this value equal to height of 2 property listings*/
-    max-height: 150px;
+    max-height: 300px;
     margin-bottom: 15px;
   }
+  #map {
+      height: 50vh;
+  }
+
 }
