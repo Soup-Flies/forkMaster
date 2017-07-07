@@ -3,6 +3,7 @@
 }
 
 h1 {
+  user-select: none;
   font-size: 100px;
   text-shadow: 2px 0 0 white;
   height: 120px;
@@ -34,12 +35,6 @@ h1 {
   overflow-y: scroll;
   padding-top: 5px;
   padding-bottom: 5px;
-  max-height: 200px;
-}
-
-#individualProps {
-  max-height: fill;
-  margin-bottom: 15px;
 }
 
 @media (max-width: 990px) {
