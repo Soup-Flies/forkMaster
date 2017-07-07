@@ -1,5 +1,8 @@
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8e88e4406aff76d8642e2105abf4789a97db5d12
 //this is just for static testing
 var currentSearch = {
   id : "",
@@ -459,4 +462,7 @@ function updateMap(data) {
         zillowApi(apiLinkBuild("zillowSearch"));
       });
   })
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8e88e4406aff76d8642e2105abf4789a97db5d12
