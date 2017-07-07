@@ -1,8 +1,4 @@
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 8e88e4406aff76d8642e2105abf4789a97db5d12
 //this is just for static testing
 var currentSearch = {
   id : "",
@@ -77,6 +73,7 @@ function amenitiesBar() {
   certain amenities based on checked boxes then a submit button
   */
 }
+
 //take in user input for the searches to happen
   function updateCurrentSearch(data) {
     console.log(data);
@@ -191,9 +188,7 @@ function zillowApi(url) {
       dataJSON = xmlToJson(data);
       console.log(dataJSON);
       //shortcut to maneuver the object more easily
-      temp = dataJSON["SearchResults:searchresults"].response.results.result;
-
-      // temp = knockoutObservable(temp);
+      var temp = dataJSON["SearchResults:searchresults"].response.results.result;
 
       //we now need to populate this data into the fullDetails element
       fullDetails(temp);
@@ -204,46 +199,39 @@ function zillowApi(url) {
 };
 
 //recursive function to manipulate the input object and wrap everything with a KO observable
+//deprecated no longer using knockout
 function knockoutObservable(obj) {
   var newObj = obj;
   console.log(newObj);
   $.each(obj, function(i, v) {
     if (typeof(newObj[i]) === 'object') {
       console.log('another object recursion time!');
-      knockoutObservable(newObj[i]);
+      knockoutObservable(newOj[i]);
     } else {
       console.log('base value');
       newObj[i] = ko.observable(v);
     }
   })
-  console.log(newObj);
+  return newObj;
 };
 
 function fullDetails(property) {
-  console.log(property);
-  // $(".fullDetails").empty();
-  //if statement to check if this is the first search to initialize the ko scripts
-  if (firstSearch) {
-    //initialize Knockout JS for the current Property
-    ko.applyBindings(property);
-    firstSearch = false;
-  }
 
 
-  // var $div = $("<div>");
-  // $div.html(`
-  //   <h2>${property.address.street["#text"]}
-  //   ${property.address.city["#text"]}, ${property.address.state["#text"]} ${property.address.zipcode["#text"]}
-  //   </h2>
-  //   <h3>${property.bedrooms["#text"]} Bed
-  //   `);
-  //   $(".fullDetails").empty();
-  //   $(".fullDetails").append($div);
+  var $div = $("<div>");
+  $div.html(`
+    <h2>${property.address.street["#text"]}
+    ${property.address.city["#text"]}, ${property.address.state["#text"]} ${property.address.zipcode["#text"]}
+    </h2>
+    <h3>${property.bedrooms["#text"]} bed &middot; ${property.bathrooms["#text"]} bath &middot; ${property.finishSqFt["#text"]}
+    `);
+    $(".fullDetails").empty();
+    $(".fullDetails").append($div);
 }
 
 function addressResidential(zpidData) {
   //very large log, only uncomment when necessary
-  // console.log(zpidData);
+  console.log(zpidData);
 
   //this is the "Regex" a method in programming to search through strings
   //This string of "Regex" will read the returned information from Zillow website and pull out:
@@ -292,7 +280,7 @@ function appendResidential(filteredProperties) {
     $p.html((index + 1 ) + " of " + filteredProperties.length + ":<br>");
     $p.append(value.street);
     $p.append(`<br>${value.city}, ${value.state} ${value.zipcode}`);
-    $p.append("<br><strong>Click for more information</strong>");
+    $p.append("<br><strong>Click for more info</strong>");
     $div.append($p);
     $div.append($img);
     $("#individualProps").append($div);
@@ -457,12 +445,7 @@ function updateMap(data) {
           zIndex: 1
     });
 
-
         //call zillow api with zpid scraped from page
         zillowApi(apiLinkBuild("zillowSearch"));
       });
   })
-<<<<<<< HEAD
-
-=======
->>>>>>> 8e88e4406aff76d8642e2105abf4789a97db5d12
