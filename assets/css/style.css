@@ -7,11 +7,17 @@ body {
 }
 
 h1 {
+  user-select: none;
   font-size: 100px;
+  text-shadow: 2px 0 0 white;
+  height: 120px;
+  background-image: url("http://www.wardloghome.com/wp-content/uploads/2017/01/modern-cream-nuance-of-the-beautiful-house-interior-designs-that-can-be-decor-with-futuristic-lighting-that-can-add-the-beauty-inside-the-modern-house-design-ideas-pertaining-to-house-interior-design.jpg");
+  background-size: cover;
+  border: 3px #A9A9A9;
 }
 
-.border {
-  border: 2px solid black;
+.border, .btn {
+  box-shadow: inset 0 0 1em #ecc6d9, 0 0 1em #ffcc66;
   min-height: 40px;
 }
 
@@ -22,7 +28,7 @@ h1 {
 }
 
 .prop {
-  margin-top: 3px;
+  margin: 3px;
   margin-bottom: 3px;
   height: 100px;
 }
@@ -38,7 +44,7 @@ h1 {
 @media (max-width: 990px) {
   #individualProps {
     /*Make this value equal to height of 2 property listings*/
-    max-height: 150px;
+    max-height: 213px;
     margin-bottom: 15px;
   }
 }

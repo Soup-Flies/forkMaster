@@ -209,7 +209,7 @@ function knockoutObservable(obj) {
       knockoutObservable(newObj[i]);
     } else {
       console.log('base value');
-      newObj[i] = ko.observable( v );
+      newObj[i] = ko.observable(v);
     }
   })
   console.log(newObj);
@@ -282,7 +282,7 @@ function appendResidential(filteredProperties) {
     var $div = $("<div class='prop border'>");
     $div.attr("data-json", JSON.stringify(value));
     //store object data into the div element for later use to populate specific details
-    var $p = $("<p>");
+    var $p = $("<p class='addressProp'>");
     var $img = $("<img class='propImg' alt='Property Image' onerror='appendDefault(this)'>");
     $img.attr("src", value.img);
     $p.html((index + 1 ) + " of " + filteredProperties.length + ":<br>");
@@ -353,20 +353,6 @@ function initMap(lati, long) {
     var photoHttp= "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+data[idx].photos[0].photo_reference+"&key="+googlePlacesKey;
     console.log(photoHttp);
 
-    // $.ajax({
-    //   url: photoHttp,
-    //   type: 'GET',
-    //   crossDomain: true,
-    //     success: function(response) {
-    //       // console.log(response);
-    //       // var photoData = response.results;
-    //       console.log(' WHAT IS OUR RESPONSE DATA FOR PHOTO', response.results);
-    //       idx++
-    //       // getGPhoto(data, idx);
-    //       // updateMap(data[idx],photoData);
-    //      },
-    //     //  TODO: add failure code
-    //   })
   }
 
 //New call to update maps with search parameters passed by user
