@@ -81,7 +81,6 @@ function amenitiesBar() {
     searchInput = {
       address: null,
       id : null,
-      zip : $("#inputZip").val(),
       state : $("#inputState").val(),
       city : $("#inputCity").val(),
       type : data.value,
@@ -149,7 +148,9 @@ function apiLinkBuild(apiType) {
 //The scripts need to be interpretted so that zpid's get put into the html
 function zillowWebScrape() {
   let rent;
-  console.log(searchInput.type);
+  let listType = "fsba,fsbo,fore,new_lt";
+  var tempArray = [];
+
   if (searchInput.type == "rent") {
     rent = 'for_rent/';
     searchInput.price = '0-5000_price';
@@ -157,8 +158,7 @@ function zillowWebScrape() {
     rent = '';
     searchInput.price = "0-10000000_price";
   };
-  let listType = "fsba,fsbo,fore,new_lt";
-  var tempArray = [];
+
   // strict search few returns
   // var tempUrl = `${corsWorkaround}http://www.zillow.com/homes/${rent}${searchInput.city}-${searchInput.state}/${listType}/${searchInput.price}/house,condo,apartment_duplex,townhouse_type .zsg-photo-card-overlay-link`;
   console.log(searchInput.type);
@@ -189,7 +189,7 @@ function zillowApi(url) {
       console.log(dataJSON);
       //shortcut to maneuver the object more easily
       var temp = dataJSON["SearchResults:searchresults"].response.results.result;
-
+      console.log(temp);
       //we now need to populate this data into the fullDetails element
       fullDetails(temp);
     })
@@ -216,22 +216,43 @@ function knockoutObservable(obj) {
 };
 
 function fullDetails(property) {
-
-
-  var $div = $("<div>");
+  $(".fullDetails").css("display", "inline");
+  var $div = $("<div class='col-xs-6'>");
+  var $divTwo = $("<div class='col-xs-6'>");
+  var $row = $("<div class='row'>");
+  var $facts = $("<div>");
+  var rent;
+  if (searchInput.type === "rent") {
+    rent = true;
+  }
+  var value = property.taxAssessment["#text"].slice(0, property.taxAssessment["#text"].length - 2);
   $div.html(`
-    <h2>${property.address.street["#text"]}
+    <h2>${property.address.street["#text"]},<br>
     ${property.address.city["#text"]}, ${property.address.state["#text"]} ${property.address.zipcode["#text"]}
     </h2>
-    <h3>${property.bedrooms["#text"]} bed &middot; ${property.bathrooms["#text"]} bath &middot; ${property.finishSqFt["#text"]}
+    <h3>${property.bedrooms["#text"]} bed &middot; ${property.bathrooms["#text"]} bath &middot; ${property.finishedSqFt["#text"]} sqft </h3>
     `);
+  $divTwo.html(`
+    <h3>
+    ${(rent ? `Estimated rent is:<br> <strong>$${property.rentzestimate.amount["#text"]}</strong>` : `Property value:<br> <strong>$${value}</strong>`)}
+    </h3>
+    `);
+  $facts.html(`
+    
+    `);
+
+
     $(".fullDetails").empty();
-    $(".fullDetails").append($div);
+    $($row).append($facts);
+    $(".fullDetails").append($div, $divTwo, $row);
+
 }
+
+
 
 function addressResidential(zpidData) {
   //very large log, only uncomment when necessary
-  console.log(zpidData);
+  // console.log(zpidData);
 
   //this is the "Regex" a method in programming to search through strings
   //This string of "Regex" will read the returned information from Zillow website and pull out:
@@ -272,6 +293,7 @@ function appendResidential(filteredProperties) {
   //loop over the properties returned from Comp data to populate into individualProps element
   $.each(filteredProperties, function(index, value) {
     var $div = $("<div class='prop border'>");
+    //appending the returned object as json string to not need a global variable
     $div.attr("data-json", JSON.stringify(value));
     //store object data into the div element for later use to populate specific details
     var $p = $("<p class='addressProp'>");
@@ -332,20 +354,11 @@ function initMap(lati, long) {
        success: function(response) {
          var data = response.results;
          console.log('Google Places return data', response.results);
-        //  getGPhoto(data, 0);
          updateMap(data);
        },
     })
   };
 
-  //Make Ajax call on Google photo's for info window
-  function getGPhoto(data, idx) {
-    console.log(data);
-
-    var photoHttp= "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+data[idx].photos[0].photo_reference+"&key="+googlePlacesKey;
-    console.log(photoHttp);
-
-  }
 
 //New call to update maps with search parameters passed by user
 function updateMap(data) {
@@ -437,6 +450,7 @@ function updateMap(data) {
         searchInput.lat = parseFloat(propertyData.lat);
         searchInput.long = parseFloat(propertyData.long);
 
+        // Update map location and make marker for selected property
         initMap(searchInput.lat, searchInput.long);
         var marker = new google.maps.Marker({
           position: new google.maps.LatLng(searchInput.lat, searchInput.long),
