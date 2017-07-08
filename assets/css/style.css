@@ -65,6 +65,7 @@ h1 {
   border-left-style: dashed;
   border-right-style: dashed;
   display: none;
+  margin-bottom: 30px;
 }
 
 .propImg {
