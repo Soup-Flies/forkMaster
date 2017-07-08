@@ -19,15 +19,12 @@ function formVal (){
 
 window.onkeydown = function (e) {
 var code = e.keyCode //this returns the number to test against
-
-  if (city =< "65" || state =< "65") {
-    alert("please input a new char");
+console.log(code);
+  if (code >= 65 || code <= 90 || code == 32) {
+    //do good stuff with the pressed key
+  } else {
+    //input different keypress
+    //wouldn't suggest a popup on this though just do nothing or something like that
   }
-
-
-
-
-
-
 
 }
