@@ -1,6 +1,6 @@
 body {
   font-size: 16px;
-  background-image: url("http://www.dhresource.com/0x0s/f2-albu-g3-M01-B7-50-rBVaHFZZAFSAaCbnAAJLp4kSZD8136.jpg/10meters-lot-3d-block-stone-slate-brick-wall.jpg")
+  background-image: url("http://www.sihirperisi.com/icerik/psd/tahta-tas-zemin-duvar%20(4).jpg")
 }
 
 #map {
@@ -12,7 +12,7 @@ h1 {
   font-size: 100px;
   text-shadow: 2px 0 0 white;
   height: 125px;
-  background-image: url("http://www.wardloghome.com/wp-content/uploads/2017/01/modern-cream-nuance-of-the-beautiful-house-interior-designs-that-can-be-decor-with-futuristic-lighting-that-can-add-the-beauty-inside-the-modern-house-design-ideas-pertaining-to-house-interior-design.jpg");
+  background-image: url("http://img.freepik.com/free-psd/white-wood-texture-background-design_1022-75.jpg?size=338&ext=jpg");
   background-size: cover;
   border: 1px solid black;
 }
@@ -28,8 +28,8 @@ h1 {
   margin-top: 5px;
   margin-bottom: 5px;
   border: solid 2px black;
-  background-image: url("https://s-media-cache-ak0.pinimg.com/originals/cb/cc/51/cbcc5107957507e15be6133193faf0b9.jpg");
-  background-size: cover;
+  background-image: url("http://s020.radikal.ru/i703/1410/19/a794c6230ac5.jpg");
+
 }
 
 .prop {
@@ -78,9 +78,8 @@ h1 {
 .defaultProp {
   font-size: 20px;
   font-style: italic;
-
   color: white;
-  height: 50px;
+  height: 40px;
   text-shadow: 1px 1px black;
 }
 
