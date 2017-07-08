@@ -389,7 +389,10 @@ function updateMap(data) {
     //click handling for search button
     $(".submitButtons").on("click", '.btn', function(event) {
       event.preventDefault();
+
       formVal(this);
+
+
     });
       //use delegated click to link onto each property in the list
       $("#individualProps").on('click', '.prop',  function() {
