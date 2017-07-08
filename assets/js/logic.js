@@ -65,7 +65,13 @@ function testUserInput() {
 };
 
 
-function amenitiesBar() {
+function amenitiesBar(type) {
+ 
+    // var temp = $(type).val();
+    // searchInput.venueType = temp;
+    searchInput.venueType = type;
+    console.log('searchInput.venueType',searchInput.venueType);
+    newPlaces();
   /*types of amenities google accepts that are useful for us -- best to limit to maybe 3
   bar - cafe - church - gym - hospital
   library - night_club - park - restaurant - school
@@ -320,7 +326,9 @@ function initMap(lati, long) {
     var baseUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
     if (searchInput.lat) {
       currentMap = `${baseUrl}${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+    console.log(currentMap)
     } else {
+
       currentMap = `${baseUrl}${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
     }
     currentMap = `${corsWorkaround}${currentMap}`;
@@ -417,6 +425,11 @@ function updateMap(data) {
 
   $(document).ready(function() {
 
+    $(".amenities").on("click", function(event) {
+      var buttonVal = $(this).val();
+      console.log('buttonval', buttonVal);
+      amenitiesBar(buttonVal);
+    })
 
     //click handling for search button
     $(".submitButtons").on("click", '.btn', function(event) {
