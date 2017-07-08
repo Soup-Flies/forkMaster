@@ -16,15 +16,18 @@ function formVal (){
   }
 
 }
-function formCharCheck (){
-//   var city = document.getElementById("inputCity").value;
-//   var state = document.getElementById("inputState").value;
 
-  document.getElementById('#borrow').addEventListener("click", function(){
-  alert("i work!");
+window.onkeydown = function (e) {
+var code = e.keyCode //this returns the number to test against
+
+  if (city =< "65" || state =< "65") {
+    alert("please input a new char");
+  }
 
 
 
-  })
+
+
+
 
 }

@@ -423,7 +423,7 @@ function updateMap(data) {
       event.preventDefault();
 
       formVal(this);
-      formCharCheck(this);
+      window.onkeydown();
 
 
     });
