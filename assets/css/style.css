@@ -35,8 +35,8 @@ h1 {
 .prop {
   padding: 10px;
   margin: 3px;
-  margin-bottom: 5px;
-  height: 120px;
+  margin-bottom: 3px;
+  height: 140px;
 }
 
 #individualProps {
@@ -118,5 +118,8 @@ p {
   }
   #map {
       height: 50vh;
+  }
+  .addressProp {
+    font-size: 16px;
   }
 

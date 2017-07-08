@@ -1,5 +1,5 @@
 
-//this is just for static testing
+//This object populates default values for initial load
 var currentSearch = {
   id : "",
   lat : 39.764339,
@@ -10,7 +10,6 @@ var currentSearch = {
   city : "Denver"
 }
 
-
 const zillowZestimate = "http://www.zillow.com/webservice/GetZestimate.htm?";
 const zillowSearch = "http://www.zillow.com/webservice/GetDeepSearchResults.htm?";
 const zillowGetComps = "http://www.zillow.com/webservice/GetDeepComps.htm?";
@@ -20,57 +19,19 @@ const googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
 const corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
 //search radius of 1 mile, 1609.344 is meters per mile
-var searchRadius = (1609.344 * 1).toString(); //possibly variable dependent on user input
+var searchRadius = (1609.344 * 3).toString();
 var firstSearch = true;
 var initialLoad = true;
 var searchInput = {};
 var map;
 
-function testUserInput() {
-  //test what kind and if the user input was valid, then build object for search
-
-  var addyDeets = { "address" : [
-      {"zip" : ""},
-      {"city" : ""},
-      {"state" : ""}]
-  };
-
-  if ($("#inputState") == true) {
-    this.val().function(initMap(addyDeets));
-  } else {
-    window.alert("Please enter a city!");
-  };
-
-  if ($("#inputZip").val().length() == 5) {
-    this.val().function(initMap(addyDeets));
-  } else {
-    $("#inputZip").html("Please enter a 5 digit zip code");
-  };
-
-  if ($("#inputCity") == true) {
-    this.val.function(initMap(addyDeets));
-  } else if ($("#inputState") == true) {
-    $("#inputState").val().function(initMap(addyDeets));
-  } else {
-    $("#inputZip").val().function(initMap(addyDeets));
-  };
-
-  if ($("#inputState") == true) {
-    this.val().function(initMap(addyDeets));
-  } else if ($("#inputCity") == true) {
-    $("#inputCity").val().function(initMap(addyDeets));
-  } else {
-    $("#inputZip").val().function(initMap(addyDeets));
-  };
-};
-
-
-function amenitiesBar() {
+function amenitiesBar(type) {
+    searchInput.venueType = type;
+    console.log('searchInput.venueType',searchInput.venueType);
+    newPlaces();
   /*types of amenities google accepts that are useful for us -- best to limit to maybe 3
   bar - cafe - church - gym - hospital
-  library - night_club - park - restaurant - school
-  we can make these checkboxes on the amenities bar that will call a special function to add or remove
-  certain amenities based on checked boxes then a submit button
+  library - night_club - park - restaurant - school\
   */
 }
 
@@ -81,7 +42,6 @@ function amenitiesBar() {
     searchInput = {
       address: null,
       id : null,
-      zip : $("#inputZip").val(),
       state : $("#inputState").val(),
       city : $("#inputCity").val(),
       type : data.value,
@@ -89,9 +49,8 @@ function amenitiesBar() {
       price : null
     }
     //venueType is changeable to view other types of ammenities.
-
     console.log(searchInput);
-    //Make query to zillow.com with city and state from search
+    //Make call for the html from zillow.com with city and state from search
     zillowWebScrape();
   };
 
@@ -149,21 +108,18 @@ function apiLinkBuild(apiType) {
 //The scripts need to be interpretted so that zpid's get put into the html
 function zillowWebScrape() {
   let rent;
-  console.log(searchInput.type);
+  let listType = "fsba,fsbo,fore,new_lt";
+  var tempArray = [];
+
   if (searchInput.type == "rent") {
     rent = 'for_rent/';
     searchInput.price = '0-5000_price';
   } else {
     rent = '';
-    searchInput.price = "0-10000000_price";
+    searchInput.price = "15000-10000000_price";
   };
-  let listType = "fsba,fsbo,fore,new_lt";
-  var tempArray = [];
-  // strict search few returns
-  // var tempUrl = `${corsWorkaround}http://www.zillow.com/homes/${rent}${searchInput.city}-${searchInput.state}/${listType}/${searchInput.price}/house,condo,apartment_duplex,townhouse_type .zsg-photo-card-overlay-link`;
   console.log(searchInput.type);
   var tempUrl = `${corsWorkaround}http://www.zillow.com/homes/${rent}${searchInput.city}-${searchInput.state}/${searchInput.price}/ .zsg-photo-card-content`;
-
   console.log(tempUrl);
   $("#zillowLoad").load(tempUrl, function(data) {
     addressResidential(data);
@@ -189,7 +145,7 @@ function zillowApi(url) {
       console.log(dataJSON);
       //shortcut to maneuver the object more easily
       var temp = dataJSON["SearchResults:searchresults"].response.results.result;
-
+      console.log(temp);
       //we now need to populate this data into the fullDetails element
       fullDetails(temp);
     })
@@ -199,7 +155,6 @@ function zillowApi(url) {
 };
 
 //recursive function to manipulate the input object and wrap everything with a KO observable
-//deprecated no longer using knockout
 function knockoutObservable(obj) {
   var newObj = obj;
   console.log(newObj);
@@ -216,22 +171,39 @@ function knockoutObservable(obj) {
 };
 
 function fullDetails(property) {
-
-
-  var $div = $("<div>");
+  $(".fullDetails").css("display", "inline");
+  var $div = $("<div class='col-xs-6'>");
+  var $divTwo = $("<div class='col-xs-6'>");
+  var $row = $("<div class='row'>");
+  var $facts = $("<div>");
+  var rent;
+  if (searchInput.type === "rent") {
+    rent = true;
+  }
+  var value = property.taxAssessment["#text"].slice(0, property.taxAssessment["#text"].length - 2);
   $div.html(`
-    <h2>${property.address.street["#text"]}
+    <h2>${property.address.street["#text"]},<br>
     ${property.address.city["#text"]}, ${property.address.state["#text"]} ${property.address.zipcode["#text"]}
     </h2>
-    <h3>${property.bedrooms["#text"]} bed &middot; ${property.bathrooms["#text"]} bath &middot; ${property.finishSqFt["#text"]}
+    <h3>${property.bedrooms["#text"]} bed &middot; ${property.bathrooms["#text"]} bath &middot; ${property.finishedSqFt["#text"]} sqft </h3>
     `);
+  $divTwo.html(`
+    <h3>
+    ${(rent ? `Estimated rent is:<br> <strong>$${property.rentzestimate.amount["#text"]}</strong>` : `Property value:<br> <strong>$${value}</strong>`)}
+    </h3>
+    `);
+  $facts.html(`
+
+    `);
+
     $(".fullDetails").empty();
-    $(".fullDetails").append($div);
+    $($row).append($facts);
+    $(".fullDetails").append($div, $divTwo, $row);
 }
 
 function addressResidential(zpidData) {
   //very large log, only uncomment when necessary
-  console.log(zpidData);
+  // console.log(zpidData);
 
   //this is the "Regex" a method in programming to search through strings
   //This string of "Regex" will read the returned information from Zillow website and pull out:
@@ -272,6 +244,7 @@ function appendResidential(filteredProperties) {
   //loop over the properties returned from Comp data to populate into individualProps element
   $.each(filteredProperties, function(index, value) {
     var $div = $("<div class='prop border'>");
+    //appending the returned object as json string to not need a global variable
     $div.attr("data-json", JSON.stringify(value));
     //store object data into the div element for later use to populate specific details
     var $p = $("<p class='addressProp'>");
@@ -296,6 +269,8 @@ function initMap(lati, long) {
   if (initialLoad) {
     //sets a default location for map to run on the first load of the page
     var geoLocation = {lat: 39.764339, lng: -104.85511};
+    //update the boolean to false so that next time initMap is run, geoLocation will be set to users search parameters
+    initialLoad = false;
   } else {
     //if the user has searched, we will set the lat and long to the users search
     var geoLocation = {lat: lati, lng: long};
@@ -305,14 +280,6 @@ function initMap(lati, long) {
       center: geoLocation,
       zoom: 15
     });
-    //if this is the first time initMap is run since the page has loaded
-    if (initialLoad) {
-      //update the boolean to false so that next time initMap is run, geoLocation will be set to users search parameters
-      initialLoad = false;
-    } else {
-      //if the user has searched then update the google places information
-      newPlaces();
-    }
 }
 
 //New api call to google for the map information
@@ -320,6 +287,7 @@ function initMap(lati, long) {
     var baseUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
     if (searchInput.lat) {
       currentMap = `${baseUrl}${searchInput.lat},${searchInput.long}&radius=${searchRadius}&type=${searchInput.venueType}&key=${googlePlacesKey}`;
+      console.log(currentMap);
     } else {
       currentMap = `${baseUrl}${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
     }
@@ -332,20 +300,10 @@ function initMap(lati, long) {
        success: function(response) {
          var data = response.results;
          console.log('Google Places return data', response.results);
-        //  getGPhoto(data, 0);
          updateMap(data);
        },
     })
   };
-
-  //Make Ajax call on Google photo's for info window
-  function getGPhoto(data, idx) {
-    console.log(data);
-
-    var photoHttp= "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+data[idx].photos[0].photo_reference+"&key="+googlePlacesKey;
-    console.log(photoHttp);
-
-  }
 
 //New call to update maps with search parameters passed by user
 function updateMap(data) {
@@ -360,18 +318,19 @@ function updateMap(data) {
     case "bar":
       iconType = './assets/images/bar.png';
       break;
+    case "gym":
+      iconType = './assets/images/gym.png';
+      break;
+    case "school":
+      iconType = './assets/images/school.png';
+      break;
     case "cafe":
       iconType = './assets/images/cafe.png';
       break;
-
-
     default:
       iconType = null;
 
   }
-/*   cafe - church - gym - hospital
-  library - night_club - park - school
-  */
   $.each(data, function(index, value) {
     var temp = data[index].geometry.location;
     var loc = {
@@ -397,8 +356,12 @@ function updateMap(data) {
     marker.addListener('click', function() {
     infowindow.open(map, marker);
     });
-    var contentString =  "<h4>" + markerData.name + "</h4>" + "<p>" + markerData.pricing + "</p>" + "<p>" + markerData.rating + "</p>"
-    + "<p>" + markerData.type + "</p>" + "<p>" + markerData.pricing + "</p>";
+    if (typeof markerData.rating == "undefined") {
+      markerData.rating = "No reviews yet"
+    } else {
+      markerData.rating = `User Rating: ${markerData.rating} stars`;
+    };
+    var contentString =  "<h4>" + markerData.name + "</h4>" +  "<p>" + markerData.rating + "</p>";
     var infowindow = new google.maps.InfoWindow({
       content: contentString
     });
@@ -417,17 +380,21 @@ function updateMap(data) {
 
   $(document).ready(function() {
 
+    $(".amenities").on("click", function(event) {
+      var buttonVal = $(this).val();
+      console.log('buttonval', buttonVal);
+      amenitiesBar(buttonVal);
+    })
 
     //click handling for search button
     $(".submitButtons").on("click", '.btn', function(event) {
       event.preventDefault();
-
-      //userinputvalidation();
-      updateCurrentSearch(this);
-
+      formVal(this);
     });
       //use delegated click to link onto each property in the list
       $("#individualProps").on('click', '.prop',  function() {
+        //display amenities bar
+        $("#accordion").css("display", "block");
         //log the object information for clicked property
         var propertyData = JSON.parse($(this).attr("data-json"));
         console.log(propertyData);
@@ -437,6 +404,7 @@ function updateMap(data) {
         searchInput.lat = parseFloat(propertyData.lat);
         searchInput.long = parseFloat(propertyData.long);
 
+        // Update map location and make marker for selected property
         initMap(searchInput.lat, searchInput.long);
         var marker = new google.maps.Marker({
           position: new google.maps.LatLng(searchInput.lat, searchInput.long),
@@ -444,7 +412,6 @@ function updateMap(data) {
           map: map,
           zIndex: 1
     });
-
         //call zillow api with zpid scraped from page
         zillowApi(apiLinkBuild("zillowSearch"));
       });
