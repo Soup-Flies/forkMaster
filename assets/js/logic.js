@@ -66,7 +66,7 @@ function testUserInput() {
 
 
 function amenitiesBar(type) {
- 
+
     // var temp = $(type).val();
     // searchInput.venueType = temp;
     searchInput.venueType = type;
@@ -244,7 +244,7 @@ function fullDetails(property) {
     </h3>
     `);
   $facts.html(`
-    
+
     `);
 
 
@@ -258,7 +258,7 @@ function fullDetails(property) {
 
 function addressResidential(zpidData) {
   //very large log, only uncomment when necessary
-  // console.log(zpidData);
+  console.log(zpidData);
 
   //this is the "Regex" a method in programming to search through strings
   //This string of "Regex" will read the returned information from Zillow website and pull out:
@@ -337,9 +337,6 @@ function initMap(lati, long) {
     if (initialLoad) {
       //update the boolean to false so that next time initMap is run, geoLocation will be set to users search parameters
       initialLoad = false;
-    } else {
-      //if the user has searched then update the google places information
-      newPlaces();
     }
 }
 
@@ -381,9 +378,16 @@ function updateMap(data) {
     case "bar":
       iconType = './assets/images/bar.png';
       break;
+    case "gym":
+      iconType = './assets/images/gym.png';
+      break;
+    case "school":
+      iconType = './assets/images/school.png';
+      break;
     case "cafe":
       iconType = './assets/images/cafe.png';
       break;
+
 
 
     default:
@@ -418,8 +422,12 @@ function updateMap(data) {
     marker.addListener('click', function() {
     infowindow.open(map, marker);
     });
-    var contentString =  "<h4>" + markerData.name + "</h4>" + "<p>" + markerData.pricing + "</p>" + "<p>" + markerData.rating + "</p>"
-    + "<p>" + markerData.type + "</p>" + "<p>" + markerData.pricing + "</p>";
+    if (typeof markerData.rating == "undefined") {
+      markerData.rating = "No reviews yet"
+    } else {
+      markerData.rating = `User Rating: ${markerData.rating} stars`;
+    };
+    var contentString =  "<h4>" + markerData.name + "</h4>" +  "<p>" + markerData.rating + "</p>";
     var infowindow = new google.maps.InfoWindow({
       content: contentString
     });
