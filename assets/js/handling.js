@@ -26,11 +26,8 @@ console.log(code);
   } else {
     //input different keypress
     //wouldn't suggest a popup on this though just do nothing or something like that
-    $(input).keyup(function(e){
-      e.stopPropagation();
+    e.preventDefault();
 
 
-    })
-  }
-
+}
 }
