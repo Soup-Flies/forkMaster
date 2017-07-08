@@ -457,7 +457,7 @@ function updateMap(data) {
       event.preventDefault();
 
       formVal(this);
-      window.onkeydown();
+      // window.onkeydown();
 
 
     });
