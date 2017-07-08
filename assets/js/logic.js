@@ -19,7 +19,7 @@ const googleKey = "AIzaSyAWE8SJk1mkR4Jlubw5Q5DoVepI2eIdh1I";
 const corsWorkaround = "https://cors-anywhere.herokuapp.com/";
 var currentMap = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${currentSearch.lat},${currentSearch.long}&radius=${searchRadius}&type=${currentSearch.venueType}&key=${googlePlacesKey}`;
 //search radius of 1 mile, 1609.344 is meters per mile
-var searchRadius = (1609.344 * 3).toString();
+var searchRadius = (1609.344 * 2).toString();
 var firstSearch = true;
 var initialLoad = true;
 var searchInput = {};
@@ -34,6 +34,7 @@ function amenitiesBar(type) {
   library - night_club - park - restaurant - school\
   */
 }
+
 
 //take in user input for the searches to happen
   function updateCurrentSearch(data) {
@@ -389,7 +390,10 @@ function updateMap(data) {
     //click handling for search button
     $(".submitButtons").on("click", '.btn', function(event) {
       event.preventDefault();
+
       formVal(this);
+
+
     });
       //use delegated click to link onto each property in the list
       $("#individualProps").on('click', '.prop',  function() {

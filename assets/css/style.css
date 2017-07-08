@@ -18,7 +18,7 @@ h1 {
 }
 
 .border, .btn {
-  border-width:5px;  
+  border-width:5px;
   border-style:ridge;
   min-height: 40px;
   background-color: white;
@@ -41,7 +41,7 @@ h1 {
 
 #individualProps {
   float: right;
-  max-height: 75vh;
+  max-height: 60vh;
   overflow-y: scroll;
   padding-top: 15px;
   padding-bottom: 15px;
@@ -65,6 +65,7 @@ h1 {
   border-left-style: dashed;
   border-right-style: dashed;
   display: none;
+  margin-bottom: 30px;
 }
 
 .propImg {
@@ -111,8 +112,7 @@ p {
 
 @media (max-width: 1200px) {
   #individualProps {
-    /*Make this value equal to height of 2 property listings*/
-    max-height: 300px;
+    height: 300px;
     margin-bottom: 15px;
   }
   #map {
@@ -121,4 +121,3 @@ p {
   .addressProp {
     font-size: 16px;
   }
-
