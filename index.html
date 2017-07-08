@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nearbuy</title>
+    <title>Near(buy)</title>
 
     <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -14,15 +14,19 @@
 </head>
 <body>
 
-<div class="container text-center">
+<div class="container-fluid text-center">
   <div class="row">
     <div class="productTitle"><h1>Near(buy)</h1></div>
   </div>
   <br>
   <div class="row">
-    <form class="col-xs-12 userSearch" action="#">
+    <form class="userSearch" action="#">
       <span><label for="city"></label><input id="inputCity" class="col-xs-6" type="text" placeholder="City" required></span>
       <span><label for="state"></label><input id="inputState" class="col-xs-6" type="text" placeholder="State" required></span>
+    </form>
+  </div>
+</div>
+    <div class ="container-fluid text-center">
       <div class="row">
         <div class="submitButtons input-group-btn">
             <button class="col-xs-6 btn btn-default" value="rent" type="button" id="borrow">Rent</button>
@@ -30,7 +34,8 @@
           </div>
         </div>
       </div>
-    </form>
+    </div>
+
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="amenitiesBar">
@@ -52,12 +57,12 @@
       </div>
     </div>
   </div>
-</div>
+
 
 <div class="container mapSection">
   <div class="row">
     <div class="col-xs-12 col-lg-4" id="individualProps">
-      <div class="defaultProp text-center">Please input a search</div>
+      <div class="defaultProp text-center">A look at Quality of Life and the surrounding Housing Market</div>
     </div>
     <div class="col-xs-12 col-lg-8" id="map"></div>
   </div>
